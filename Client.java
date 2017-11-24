@@ -7,28 +7,7 @@ import java.util.HashMap;
 
 public class Client {
 	Socket server;
-	
-	// der Client kann Nachrichten über den printWriterOutputStream senden
-	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
-	// Nachrichtenansammlung geschickt wird
-	public static void senden(String message, PrintWriter printWriterOutputStream) {
-		printWriterOutputStream.println(message);
-		printWriterOutputStream.flush();
-	}
-	
-	// Nachrichten können vom Server entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
-	static String annehmen(BufferedReader bufferedReaderInputStream) {
-		try {
-			return bufferedReaderInputStream.readLine(); 
-		} catch (IOException e) {
-			System.out.println("Eine Nachricht konnte vom Server nicht angenommen werden.");
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	
+
 	public static void main(String args[]) {
 		try {
 			Socket server = new Socket("localhost", 2345);
@@ -64,6 +43,14 @@ class sendenThread extends Thread {
 	sendenThread(PrintWriter pout) {
 		this.pout = pout;
 	}
+
+	// der Client kann Nachrichten über den printWriterOutputStream senden
+	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
+	// Nachrichtenansammlung geschickt wird
+	void senden(String message, PrintWriter printWriterOutputStream) {
+		printWriterOutputStream.println(message);
+		printWriterOutputStream.flush();
+	}
 	
 	public void run(){
 		try {
@@ -83,7 +70,7 @@ class sendenThread extends Thread {
 				
 				// ansonsten wird die eingegebene Nachricht über den printWriterOutputStream
 				// über die Methode senden() an den Server gesendet
-				Client.senden(tastatureingabe, pout);
+				senden(tastatureingabe, pout);
 			}			
 		} catch (IOException e) { System.out.println("Der sendenThread funktioniert nicht mehr."); }		
 	}
@@ -99,12 +86,24 @@ class empfangenThread extends Thread {
 		this.bis = bis;
 		this.server = server;
 	}
+
+	// Nachrichten können vom Server entgegengenommen werden
+	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
+	String annehmen(BufferedReader bufferedReaderInputStream) {
+		try {
+			return bufferedReaderInputStream.readLine();
+		} catch (IOException e) {
+			System.out.println("Eine Nachricht konnte vom Server nicht angenommen werden.");
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public void run(){
 		// empfängt die Nachrichten vom Server über die Methode annehmen()
 		// gibt diese aus, solange der Server läuft
 		while(true) {
-			String ankommendeNachricht = Client.annehmen(bis);
+			String ankommendeNachricht = annehmen(bis);
 			if (ankommendeNachricht != null) {
 				System.out.println(ankommendeNachricht);	
 			} else {

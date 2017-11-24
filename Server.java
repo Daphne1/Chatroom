@@ -8,11 +8,11 @@ public class Server {
 	// der Port ist in diesem Fall 2345
 	private int port;
 	// ArrayList zur Speicherung der aktuell angemeldeten Nutzer
-	private static ArrayList<clientThread> threads = new ArrayList<clientThread>();
+	private ArrayList<clientThread> threads = new ArrayList<clientThread>();
 	// HashMap zur Speicherung der angelegten Nutzernamen und dazugehörigen Passwörter
-	private static HashMap<String, String> hmap = new HashMap<String, String>();
+	private HashMap<String, String> hmap = new HashMap<String, String>();
 	// Anlegen des Serversockets server
-	private ServerSocket serverSocket;	
+	private ServerSocket serverSocket;
 	
 	private Server(int port) {
 		this.port = port;
@@ -21,12 +21,13 @@ public class Server {
 		System.out.println("Server hat gestartet \nZum Beenden '/stop' eingeben.");
 		Server server = new Server(2345);
 		server.serverSocket = new ServerSocket(server.port);
+		Verwaltung verwaltung = new Verwaltung();
 		
 		while (true)  {
 			ReadingServerInput eingabe = new ReadingServerInput(server);
 			eingabe.start();
 			
-			clientThread clientThread = new clientThread(server.serverSocket.accept(), threads, hmap); 
+			clientThread clientThread = new clientThread(server.serverSocket.accept(), verwaltung.threads, verwaltung.hmap);
 			clientThread.start();
 		}
 	}
@@ -172,3 +173,11 @@ class ReadingServerInput extends Thread {
 	}
 }
 	
+class Verwaltung extends Thread {
+	// ArrayList zur Speicherung der aktuell angemeldeten Nutzer
+	protected ArrayList<clientThread> threads = new ArrayList<clientThread>();
+	// HashMap zur Speicherung der angelegten Nutzernamen und dazugehörigen Passwörter
+	protected HashMap<String, String> hmap = new HashMap<String, String>();
+
+	Verwaltung(){ }
+}
