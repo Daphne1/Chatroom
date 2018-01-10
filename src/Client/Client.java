@@ -1,5 +1,7 @@
 package Client;
 
+import org.json.JSONObject;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +40,9 @@ public class Client {
 	private HashMap<String, String> RoomTexts;
 
 	public Client() {
+
+        appendMessage("Enter Username, then password!");
+
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -48,9 +53,27 @@ public class Client {
 				} else if (!enteredPassword) {
 					pw = TextField1.getText();
 					enteredPassword = true;
-				}
-				TextArea1.append(TextField1.getText());
-				senden(TextField1.getText(), printWriterOutputStream);
+
+                    JSONObject loginrequest = new JSONObject()
+                            .put("type","login")
+                            .put("user",user)
+                            .put("password",pw);
+
+                    senden(loginrequest.toString(), printWriterOutputStream);
+
+				} else {
+
+				    String message = TextField1.getText();
+                    appendMessage(message);
+
+                    JSONObject request = new JSONObject()
+                            .put("type", "message")
+                            .put("message", message);
+
+                    senden(request.toString(), printWriterOutputStream);
+
+                }
+
 				TextField1.setText("");
 			}
 		});
@@ -78,10 +101,10 @@ public class Client {
 	
 	
 	public static void main(String args[]) {
-		new Client().start_client();
+		new Client().startClient();
 	}
 
-	public void start_client() {
+	public void startClient() {
 		try {
 			Socket server = new Socket("localhost", 3456);
 
@@ -94,7 +117,7 @@ public class Client {
 			printWriterOutputStream = new PrintWriter(outputStream, true);
 
 
-			JFrame clientFrame = new JFrame("Client.Client Fenster");
+			JFrame clientFrame = new JFrame("Client Fenster");
 			clientFrame.setContentPane(mainPanel);
 			clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			clientFrame.pack();
@@ -114,7 +137,7 @@ public class Client {
 		}
 	}
 
-	protected void appendMessage (String message) {
+	protected synchronized void appendMessage (String message) {
 		TextArea1.append("\n");
 		TextArea1.append(message);
 	}

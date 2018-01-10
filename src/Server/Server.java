@@ -2,7 +2,9 @@ package Server;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 //SINGLETON
 public class Server {
@@ -16,16 +18,22 @@ public class Server {
     private ServerSocket socket;
 
     //username - clientthread
-	private static HashMap<String, ClientThread> nutzerListe = new HashMap<>();
+	private HashMap<String, ClientThread> nutzerListe;
 
 	//roomname - room
-	private static HashMap<String, Raum> raumListe = new HashMap<>();
+	private HashMap<String, Raum> raumListe;
 
 	//User - Password
-	private static HashMap<String, String> passwords = new HashMap<String, String>();
+	private HashMap<String, String> passwords;
 		
 	private Server() {
-        try {
+
+	    //init lookups
+        this.raumListe = new HashMap<>();
+	    this.nutzerListe = new HashMap<>();
+	    this.passwords = new HashMap<>();
+
+	    try {
 
             System.out.println("Server wird gestartet!");
             this.socket = new ServerSocket(PORT);
@@ -44,21 +52,53 @@ public class Server {
 
             System.out.println("Could not bind Socket!");
 
-
         }
 	}
 
+	/*
 	public static HashMap<String, String> getPasswords() {
 		return passwords;
 	}
+	*/
 
-	public static HashMap<String, ClientThread> getNutzerListe() {
-		return nutzerListe;
+	//passwords need a lock
+	public boolean checkUserPassword(String user, String password) {
+	    if (passwords.containsKey(user)) {
+	        return passwords.get(user).equals(password);
+        } else {
+	        return false;
+        }
+    }
+
+    public boolean userExists(String user) {
+	    return passwords.containsKey(user);
+    }
+
+    public void createUser(String user, String password) {
+	    passwords.put(user,password);
+    }
+
+    //raumliste needs a lock
+	public Set<String> getRaumListe() {
+		return raumListe.keySet();
 	}
 
-	public static HashMap<String, Raum> getRaumListe() {
-		return raumListe;
-	}
+	public Raum getRaum (String name) {
+	    return raumListe.containsKey(name) ? null : raumListe.get(name);
+    }
+
+	//nutzerliste needs a lock
+    public Set<String> getNutzerListe() {
+        return nutzerListe.keySet();
+    }
+
+	public void insertNutzer(String name, ClientThread thread) {
+	    nutzerListe.put(name, thread);
+    }
+
+    public void removeNutzer(String name) {
+
+    }
 
 	public static void main(String[] args) throws IOException {
 

@@ -1,7 +1,7 @@
 package Server;
 
 import Server.*;
-
+import org.json.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
@@ -9,8 +9,10 @@ import java.net.Socket;
 class ClientThread extends Thread { 
 
 	private Socket client;
+	private Server server;
 		
 	private String name;
+
 	private Raum raum;
 	private JLabel RoomLabel;
 	private JTextArea TextArea1;
@@ -21,19 +23,20 @@ class ClientThread extends Thread {
 	private JList list1;
 	private JList list2;
 
-	ClientThread(Socket client) {
+	ClientThread(Server server, Socket client) {
 		this.client = client;
+		this.server = server;
 	}
 
 	public void changeRoom (Raum neuerRaum) {
 		raum = neuerRaum;
 	}
 
-/*
-	public boolean checkPassword (passwort) {
-		if (this.passwort.equals(passwort))
+
+	public boolean checkPassword (String passwort) {
+		return server.checkUserPassword(name,passwort);
 	}
-*/
+
 	void send(String message) {
 		try {
 			DataOutputStream output = new DataOutputStream(client.getOutputStream());
@@ -68,54 +71,132 @@ class ClientThread extends Thread {
 			InputStream inputStream = client.getInputStream();
 			OutputStream outputStream = client.getOutputStream();
 			BufferedReader input= new BufferedReader(new InputStreamReader(inputStream));
-			String name, passwort;
-			while(true) {
-				send("Name: ");
-				name = accept(input);
-				send("Passwort: ");
-				passwort = accept(input);
+			String name = "", passwort = "";
 
-				if (Server.getPasswords().containsKey(name)) {
-					if (Server.getPasswords().get(name).equals(passwort)) {
-						raum = Server.getRaumListe().get("Lobby");
-						Server.getNutzerListe().put(name, this);
-						send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
-						System.out.println("zweites if");
+			String startupMessage = accept(input);
+
+			try {
+                JSONObject credentials = new JSONObject(startupMessage);
+
+                name = credentials.optString("user", "");
+                passwort = credentials.optString("password", "");
+
+            } catch (JSONException e) {
+			    //couldnt read / malformed syntax
+            }
+
+			while(true) {
+
+				if (server.userExists(name)) {
+					if (server.checkUserPassword(name, passwort)) {
+						raum = server.getRaum("Lobby");
+						server.insertNutzer(name, this);
+
+						JSONObject answer = new JSONObject()
+                                .put("type","login")
+                                .put("status","ok")
+                                .put("message","\"Du bist eingeloggt.\\nZum Ausloggen schreibe '/abmelden'.\"");
+
+						send(answer.toString());
+
+						//System.out.println("zweites if");
 						break;
+
 					} else {
-						send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
-						System.out.println("Else");
+
+					    JSONObject answer = new JSONObject()
+                                .put("type","login")
+                                .put("status","bad")
+                                .put("message","Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+
+					    send(answer.toString());
+
+						//System.out.println("Else");
+
+
 					}
 				} else {
-					raum = Server.getRaumListe().get("Lobby");
-					send("Du hast einen neuen Account erstellt.");
+
+				    server.createUser(name,passwort);
+				    raum = server.getRaum("Lobby");
 					System.out.println("Neuer Account erstellt: \t" + name);
-					send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+
+					JSONObject answer = new JSONObject()
+                            .put("type","login")
+                            .put("status","ok")
+                            .put("message",
+                                    "Du hast einen neuen Account erstellt. \nDu bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+
+					send(answer.toString());
+
 					break;
+
 				}
 			}
 
 			// send("\nAktuelle Nutzer:");
-			String onlineListe = "";
-			for (int p = 0; p < Server.getNutzerListe().size(); p++) {
-				onlineListe = onlineListe + Server.getNutzerListe().get(p).name + "\n";
+			JSONArray onlineListe = new JSONArray();
+			for (String _x : server.getNutzerListe()) {
+				onlineListe.put(_x);
 			}
-			send(onlineListe);
-			sendToRoom(name + " hat sich eingeloggt.");
-				
-			
+
+			JSONObject nutzer = new JSONObject()
+                    .put("type","nutzer")
+                    .put("message",onlineListe)
+                    .put("status","ok");
+
+			send(nutzer.toString());
+
+            JSONArray raumListe = new JSONArray();
+            for (String _x : server.getRaumListe()) {
+                raumListe.put(_x);
+            }
+
+            JSONObject raeume = new JSONObject()
+                    .put("type","raeume")
+                    .put("message",raumListe)
+                    .put("status","ok");
+
+            send(raeume.toString());
+
+			JSONObject loginAnnouncement = new JSONObject()
+                    .put("type","message")
+                    .put("message",name + " hat sich eingeloggt.")
+                    .put("status","ok");
+			sendToRoom(loginAnnouncement.toString());
+
 			while(true) {
 				String in = accept(input);
-				if (in.equals("/ChangeRoom")) {
-					send("Neuer Chat: ");
-                    String neuerRaum = in;
-                } else if (in != null) {
-					System.out.println(name + ": \t" + in);
-					sendToRoom(name + ":\t" + in);
-				} else {
-					System.out.println(name + " hat seine Verbindung abgebrochen");
-					sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
-					break;
+
+				JSONObject message = null;
+				String type = "";
+
+				try {
+				    message = new JSONObject(in);
+                    type = message.optString("type","");
+
+                } catch (JSONException e) {
+				    //malformed data
+                }
+
+				if (message == null) {
+				    //handle malformed message
+                } else {
+
+				    //TODO switch each type
+
+                    if (in.equals("/ChangeRoom")) {
+                        send("Neuer Chat: ");
+                        String neuerRaum = in;
+                    } else if (in != null) {
+                        System.out.println(name + ": \t" + in);
+                        sendToRoom(name + ":\t" + in);
+                    } else {
+                        System.out.println(name + " hat seine Verbindung abgebrochen");
+                        sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
+                        break;
+                    }
+
 				}
 			}
 		} catch ( IOException e ) {
@@ -123,8 +204,8 @@ class ClientThread extends Thread {
         } finally {
 			if ( client != null ) try {
 				client.close();
-				Server.getNutzerListe().remove(name);
-                Server.getRaumListe().remove(name);
+				server.removeNutzer(name);
+                //Server.getRaumListe().remove(name); wtf's this supposed to do?!
 			} catch ( IOException e ) { }
 		}
 	}

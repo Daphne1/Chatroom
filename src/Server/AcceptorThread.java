@@ -27,7 +27,7 @@ class AcceptorThread extends Thread {
 		while (true) {
 
 			try {
-				ClientThread clientThread = new ClientThread(socket.accept());
+				ClientThread clientThread = new ClientThread(server, socket.accept());
 				clientThread.start();
 			} catch ( IOException e ) {
 				System.out.println("Failed to accept connection of a client.");
