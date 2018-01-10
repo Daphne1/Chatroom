@@ -1,17 +1,21 @@
+package Server;
+
+import Server.Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ServerInput extends Thread {
-	private Server2 server;
+	private Server server;
 	
-	public ServerInput(Server2 server){
+	public ServerInput(Server server){
 		this.server = server;
 	}
 	public void run() {
 		try {
 			while(true) {
-				// f�ngt den Stream der Tastatur ab
+				// faengt den Stream der Tastatur ab
 				InputStreamReader serverEingabe = new InputStreamReader(System.in);
 				BufferedReader bufTastatur = new BufferedReader(serverEingabe);
 				

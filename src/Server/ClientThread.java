@@ -1,12 +1,14 @@
+package Server;
+
+import Server.*;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
-import java.util.*;
 
 class ClientThread extends Thread { 
-	Socket client;
+
+	private Socket client;
 		
 	private String name;
 	private Raum raum;
@@ -21,14 +23,6 @@ class ClientThread extends Thread {
 
 	ClientThread(Socket client) {
 		this.client = client;
-		/*sendButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				send(TextField1.getText());
-				TextArea1.append(TextField1.getText());
-				TextField1.setText("");
-			}
-		});*/
 	}
 
 	public void changeRoom (Raum neuerRaum) {
@@ -70,7 +64,7 @@ class ClientThread extends Thread {
 	public void run(){ 
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
-			System.out.println("ClientThread läuft");
+			System.out.println("Server.ClientThread läuft");
 			InputStream inputStream = client.getInputStream();
 			OutputStream outputStream = client.getOutputStream();
 			BufferedReader input= new BufferedReader(new InputStreamReader(inputStream));
@@ -81,10 +75,10 @@ class ClientThread extends Thread {
 				send("Passwort: ");
 				passwort = accept(input);
 
-				if (Server2.getPasswords().containsKey(name)) {
-					if (Server2.getPasswords().get(name).equals(passwort)) {
-						raum = Server2.getRaumListe().get("Lobby");
-						Server2.getNutzerListe().put(name, this);
+				if (Server.getPasswords().containsKey(name)) {
+					if (Server.getPasswords().get(name).equals(passwort)) {
+						raum = Server.getRaumListe().get("Lobby");
+						Server.getNutzerListe().put(name, this);
 						send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
 						System.out.println("zweites if");
 						break;
@@ -93,7 +87,7 @@ class ClientThread extends Thread {
 						System.out.println("Else");
 					}
 				} else {
-					raum = Server2.getRaumListe().get("Lobby");
+					raum = Server.getRaumListe().get("Lobby");
 					send("Du hast einen neuen Account erstellt.");
 					System.out.println("Neuer Account erstellt: \t" + name);
 					send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
@@ -103,8 +97,8 @@ class ClientThread extends Thread {
 
 			// send("\nAktuelle Nutzer:");
 			String onlineListe = "";
-			for (int p = 0; p < Server2.getNutzerListe().size(); p++) {
-				onlineListe = onlineListe + Server2.getNutzerListe().get(p).name + "\n";
+			for (int p = 0; p < Server.getNutzerListe().size(); p++) {
+				onlineListe = onlineListe + Server.getNutzerListe().get(p).name + "\n";
 			}
 			send(onlineListe);
 			sendToRoom(name + " hat sich eingeloggt.");
@@ -129,8 +123,8 @@ class ClientThread extends Thread {
         } finally {
 			if ( client != null ) try {
 				client.close();
-				Server2.getNutzerListe().remove(name);
-                Server2.getRaumListe().remove(name);
+				Server.getNutzerListe().remove(name);
+                Server.getRaumListe().remove(name);
 			} catch ( IOException e ) { }
 		}
 	}

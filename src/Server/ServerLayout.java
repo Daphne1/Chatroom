@@ -1,5 +1,6 @@
+package Server;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class ServerLayout {
     private JLabel serverlogInfo;
@@ -31,7 +32,7 @@ public class ServerLayout {
         bar = new JMenuBar();
         Server = new JMenu("Server");
         Benutzer = new JMenu("Benutzer");
-        Raum = new JMenu("Raum");
+        Raum = new JMenu("Server.Raum");
         Operationen = new JMenu("Operationen");
 
         /*fileNew = new JMenuItem("New File");
@@ -47,12 +48,12 @@ public class ServerLayout {
         bar.add(Raum);
         bar.add(Operationen);
 
-        /*Server.add(fileNew);
-        Server.add(fileOpen);
-        Server.add(fileSave);
-        Server.add(fileExit);
+        /*Server.Server.add(fileNew);
+        Server.Server.add(fileOpen);
+        Server.Server.add(fileSave);
+        Server.Server.add(fileExit);
         Benutzer.add(imgBtn1);
-        Raum.add(hlpAbout);*/
+        Server.Raum.add(hlpAbout);*/
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
