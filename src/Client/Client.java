@@ -72,12 +72,34 @@ public class Client {
 
 				    String message = TextField1.getText();
 
-				    //appendMessage(message);
+                    JSONObject request = new JSONObject();
 
-                    JSONObject request = new JSONObject()
+				    if (message.startsWith("/")) {
+
+				        //command
+                        if (message.startsWith("/abmelden")) {
+
+                            request
+                                    .put("type","logout")
+                                    .put("message","");
+
+                        } else if (message.startsWith("/changeroom")) {
+                            int indexfirstspace = message.indexOf(' ');
+                            String param = message.substring(indexfirstspace + 1);
+
+                            request
+                                    .put("type","changeroom")
+                                    .put("message",param);
+
+                        }
+
+                    } else {
+
+				        //normal message
+				        request
                             .put("type", "message")
                             .put("message", message);
-
+                    }
                     senden(request.toString(), printWriterOutputStream);
 
                 }

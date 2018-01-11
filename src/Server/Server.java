@@ -7,10 +7,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 //SINGLETON
 public class Server {
@@ -30,7 +27,7 @@ public class Server {
 	private HashMap<String, Raum> raumListe;
 
 	//User - Password
-	private HashMap<String, String> passwords;
+	private HashMap<String, Map.Entry<String,Boolean>> passwords;
 		
 	private Server() {
 
@@ -73,10 +70,15 @@ public class Server {
 	//passwords need a lock
 	public boolean checkUserPassword(String user, String password) {
 	    if (passwords.containsKey(user)) {
-	        return passwords.get(user).equals(password);
+	        //password match
+	        return passwords.get(user).getKey().equals(password);
         } else {
 	        return false;
         }
+    }
+
+    public boolean isBanned(String user) {
+	    return (passwords.containsKey(user)) ? !passwords.get(user).getValue() : false;
     }
 
     public boolean userExists(String user) {
@@ -84,7 +86,7 @@ public class Server {
     }
 
     public void createUser(String user, String password) {
-	    passwords.put(user,password);
+	    passwords.put(user,new AbstractMap.SimpleEntry<String, Boolean>(password,false));
 
 	    //save passwords
 	    saveUserData();
@@ -125,13 +127,21 @@ public class Server {
 			JSONObject allData = new JSONObject();
 			JSONArray allUsers = new JSONArray();
 
-			for (Map.Entry<String,String> _x : passwords.entrySet()) {
+			for (Map.Entry<String,Map.Entry<String,Boolean>> _x : passwords.entrySet()) {
 
 				JSONObject user = new JSONObject()
 						.put(
-								_x.getKey(),
-								_x.getValue()
-						);
+								"user",
+								_x.getKey()
+						)
+                        .put(
+                                "password",
+                                _x.getValue().getKey()
+                        )
+                        .put(
+                                "banned",
+                                _x.getValue().getValue()
+                        );
 
 				allUsers.put(user);
 
@@ -173,9 +183,13 @@ public class Server {
 								if (user != null) {
 									String username = user.optString("user", "");
 									String password = user.optString("password","");
+                                    Boolean banned = user.optBoolean("banned",false);
 
 									if (!username.equals("") && !password.equals("")) {
-										passwords.put(username,password);
+										passwords.put(
+										        username,
+                                                new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
+                                        );
 									}
 
 								}
@@ -201,6 +215,26 @@ public class Server {
 	public void sendToUser (String nutzer, String message) {
 
 	    nutzerListe.get(nutzer).send(message);
+
+    }
+
+    public void banUser(String user) {
+
+	    if (passwords.containsKey(user)) {
+
+	        passwords.get(user).setValue(true);
+
+        }
+
+        saveUserData();
+
+	    kickUser(user);
+    }
+
+    public void kickUser(String user) {
+
+	    if (nutzerListe.containsKey(user))
+	        nutzerListe.get(user).kick();
 
     }
 

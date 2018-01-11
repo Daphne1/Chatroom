@@ -12,6 +12,7 @@ class ClientThread extends Thread {
 	private Server server;
 		
 	private String name;
+	boolean valid = true;
 
 	private Raum raum;
 	private JLabel RoomLabel;
@@ -28,7 +29,7 @@ class ClientThread extends Thread {
 		this.server = server;
 	}
 
-	void send(String message) {
+	synchronized void send(String message) {
 		try {
 			DataOutputStream output = new DataOutputStream(client.getOutputStream());
 			PrintWriter pWriterOutputStream = new PrintWriter(output, true);
@@ -66,6 +67,20 @@ class ClientThread extends Thread {
 			return null;
 		}
 	}
+
+	public void kick() {
+	    try {
+
+            server.removeNutzer(name);
+            raum.removeUser(name);
+
+	        if (client != null)
+	            client.close();
+
+        } catch (IOException e) {
+	        //already disconnected?
+        }
+    }
 	
 	public void run(){ 
 		// Bearbeitung einer aufgebauten Verbindung
@@ -94,18 +109,28 @@ class ClientThread extends Thread {
 
 				if (server.userExists(name)) {
 					if (server.checkUserPassword(name, passwort)) {
-						raum = server.getRaum("Lobby");
-						server.insertNutzer(name, this);
 
-						JSONObject answer = new JSONObject()
-                                .put("type","login")
-                                .put("status","ok")
-                                .put("message","\"Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.\"");
+					    if (!server.isBanned( name )) {
+                            server.insertNutzer(name, this);
 
-						send(answer.toString());
+                            JSONObject answer = new JSONObject()
+                                    .put("type", "login")
+                                    .put("status", "ok")
+                                    .put("message", "Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
 
-						//System.out.println("zweites if");
-						break;
+                            send(answer.toString());
+
+                            //System.out.println("zweites if");
+                            break;
+                        } else {
+
+					        JSONObject answer = new JSONObject()
+                                    .put("type", "login")
+                                    .put("status", "bad")
+                                    .put("message", "Du bist gebannt.");
+
+                            send(answer.toString());
+                        }
 
 					} else {
 
@@ -123,7 +148,7 @@ class ClientThread extends Thread {
 				} else {
 
 				    server.createUser(name,passwort);
-				    raum = server.getRaum("Lobby");
+
 					System.out.println("Neuer Account erstellt: \t" + name);
 
 					JSONObject answer = new JSONObject()
@@ -139,9 +164,12 @@ class ClientThread extends Thread {
 				}
 			}
 
+            raum = server.getRaum("Lobby");
+            raum.addUser(name);
+
 			// send("\nAktuelle Nutzer:");
 			JSONArray onlineListe = new JSONArray();
-			for (String _x : server.getNutzerListe()) {
+			for (String _x : raum.getNutzerList()) {
 				onlineListe.put(_x);
 			}
 
@@ -170,7 +198,7 @@ class ClientThread extends Thread {
                     .put("status","ok");
 			sendToRoom(loginAnnouncement.toString());
 
-			while(true) {
+			while(valid) {
 				String in = accept(input);
 
 				JSONObject message = null;
@@ -214,7 +242,9 @@ class ClientThread extends Thread {
                                                 .put("status","ok")
                                                 .toString()
                                 );
+                                raum.removeUser(name);
                                 raum = neuerRaum;
+                                raum.addUser(name);
                             } else {
                                 send(
                                         new JSONObject()
@@ -233,6 +263,7 @@ class ClientThread extends Thread {
 
                         if ( client != null ) {
                             try {
+                                raum.removeUser(name);
                                 server.removeNutzer(name);
                                 client.close();
                                 //Server.getRaumListe().remove(name); wtf's this supposed to do?!
@@ -254,8 +285,9 @@ class ClientThread extends Thread {
         } finally {
 			if ( client != null ) {
                 try {
-                    client.close();
                     server.removeNutzer(name);
+                    raum.removeUser(name);
+                    client.close();
                     //Server.getRaumListe().remove(name); wtf's this supposed to do?!
                 } catch (IOException e) {
 
