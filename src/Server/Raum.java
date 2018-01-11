@@ -4,20 +4,20 @@ import java.util.LinkedList;
 
 public class Raum {
 	private String name;
-	private LinkedList<ClientThread> nutzerThreads = new LinkedList<>();
+	private LinkedList<String> nutzer = new LinkedList<>();
 	
 	Raum (String raumName) {
 		this.name = raumName;
 	}
 	
-	public int getNumberOfPersons (LinkedList<ClientThread> nutzerThreads) {
-		return nutzerThreads.size();
+	public int getNumberOfPersons () {
+		return nutzer.size();
 	}
-	public void removeUser(ClientThread userThread) {
-		nutzerThreads.remove(userThread);
+	public void removeUser(String name) {
+		nutzer.remove(name);
 	}
-	public void addUser(ClientThread userThread) {
-		nutzerThreads.add(userThread);
+	public void addUser(String name) {
+		nutzer.add(name);
 	}
 
 	public String getName() {
@@ -27,10 +27,8 @@ public class Raum {
 		this.name = name;
 	}
 
-	public LinkedList<ClientThread> getNutzerThreads() {
-		return nutzerThreads;
+	public LinkedList<String> getNutzerList() {
+		return nutzer;
 	}
-	public void setNutzerThreads(LinkedList<ClientThread> nutzerThreads) {
-		this.nutzerThreads = nutzerThreads;
-	}
+
 }

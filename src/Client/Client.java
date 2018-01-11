@@ -1,5 +1,6 @@
 package Client;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -24,8 +25,8 @@ public class Client {
 	private JLabel RoomLabel;
 	private JButton sendButton;
 	private JTabbedPane tabbedPane1;
-	private JList list2;
-	private JList list1;
+	private JList<String> list2;
+	private JList<String> list1;
 	private JTextArea TextArea1;
 
 	private Socket server;
@@ -33,16 +34,22 @@ public class Client {
 
 	private boolean enteredUser = false;
 	private boolean enteredPassword = false;
+	private boolean loginConfirmed = false;
 	private String user;
 	private String pw;
 
     //ROOMNAME, STRING
 	private HashMap<String, String> RoomTexts;
 
-	public Client() {
+	private Client() {
+
+	    boolean started = startClient();
+
+	    if (!started) {
+	        System.exit(0);
+        }
 
         appendMessage("Enter Username, then password!");
-
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -61,10 +68,11 @@ public class Client {
 
                     senden(loginrequest.toString(), printWriterOutputStream);
 
-				} else {
+				} else if (loginConfirmed) {
 
 				    String message = TextField1.getText();
-                    appendMessage(message);
+
+				    //appendMessage(message);
 
                     JSONObject request = new JSONObject()
                             .put("type", "message")
@@ -79,32 +87,57 @@ public class Client {
 		});
 	}
 
+	public void confirmLogin() {
+	    loginConfirmed = true;
+
+	    appendMessage("Du bist nun eingeloggt");
+    }
+
+    public void resetLogin(String error) {
+	    loginConfirmed = false;
+	    enteredPassword = false;
+	    enteredUser = false;
+
+	    appendMessage(error);
+    }
+
+    public boolean isLoginConfirmed() {
+	    return loginConfirmed;
+    }
+
+    public void addRooms (JSONArray array) {
+
+        if (array != null) {
+            for (int i = 0; i < array.length(); i++) {
+                ((DefaultListModel<String>)list1.getModel()).addElement(array.optString(i,""));
+            }
+        }
+
+    }
+
+    public void addUsers (JSONArray array) {
+
+        if (array != null) {
+            for (int i = 0; i < array.length(); i++) {
+                ((DefaultListModel<String>)list2.getModel()).addElement(array.optString(i,""));
+            }
+        }
+
+    }
+
 	// der Client.Client kann Nachrichten über den printWriterOutputStream senden
 	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
 	// Nachrichtenansammlung geschickt wird
-	public static void senden(String message, PrintWriter printWriterOutputStream) {
+	public void senden(String message, PrintWriter printWriterOutputStream) {
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
 	
-	// Nachrichten koennen vom Server.Server entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
-	static String annehmen(BufferedReader bufferedReaderInputStream) {
-		try {
-			return bufferedReaderInputStream.readLine(); 
-		} catch (IOException e) {
-			System.out.println("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	
 	public static void main(String args[]) {
-		new Client().startClient();
+		Client.getInstance();
 	}
 
-	public void startClient() {
+	private boolean startClient() {
 		try {
 			Socket server = new Socket("localhost", 3456);
 
@@ -130,16 +163,22 @@ public class Client {
             empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
             empfaengt.start();
 
+            return true;
+
 		} catch(UnknownHostException e) {
 			System.out.println("Can't find host.");
 		} catch (IOException e) {
 			System.out.println("Error connecting to host.");
 		}
+
+		return false;
 	}
 
 	protected synchronized void appendMessage (String message) {
 		TextArea1.append("\n");
 		TextArea1.append(message);
 	}
+
+
 }
 

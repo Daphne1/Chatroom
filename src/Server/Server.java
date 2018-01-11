@@ -1,9 +1,15 @@
 package Server;
 
-import java.io.IOException;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 //SINGLETON
@@ -32,6 +38,9 @@ public class Server {
         this.raumListe = new HashMap<>();
 	    this.nutzerListe = new HashMap<>();
 	    this.passwords = new HashMap<>();
+
+	    //read passwords
+	    loadUserData();
 
 	    try {
 
@@ -76,6 +85,9 @@ public class Server {
 
     public void createUser(String user, String password) {
 	    passwords.put(user,password);
+
+	    //save passwords
+	    saveUserData();
     }
 
     //raumliste needs a lock
@@ -97,6 +109,98 @@ public class Server {
     }
 
     public void removeNutzer(String name) {
+		nutzerListe.remove(name);
+    }
+
+    private void saveUserData() {
+
+		FileOutputStream out = null;
+
+		try {
+
+			File users = new File("users.txt");
+			users.createNewFile(); // if file already exists will do nothing
+			FileOutputStream stream = new FileOutputStream(users, false);
+
+			JSONObject allData = new JSONObject();
+			JSONArray allUsers = new JSONArray();
+
+			for (Map.Entry<String,String> _x : passwords.entrySet()) {
+
+				JSONObject user = new JSONObject()
+						.put(
+								_x.getKey(),
+								_x.getValue()
+						);
+
+				allUsers.put(user);
+
+			}
+
+			allData.put("users",allUsers);
+			stream.write(allData.toString().getBytes());
+
+		} catch (FileNotFoundException e) {
+			//couldnt create file
+		} catch (IOException e) {
+			//couldnt open/create file
+		}
+	}
+
+	private void loadUserData() {
+
+		File users = new File("users.txt");
+		if (users.isFile() && users.canRead()) {
+			try {
+				FileInputStream in = new FileInputStream(users);
+				try {
+					String content = "";
+					int c;
+					while ((c = in.read()) != -1) {
+						content += (char)c;
+					}
+
+					try {
+						JSONObject json = new JSONObject(content);
+
+						JSONArray usersarray = json.optJSONArray("users");
+
+						if (usersarray != null) {
+
+							for (int i = 0; i < usersarray.length(); i++) {
+								JSONObject user = usersarray.optJSONObject(i);
+
+								if (user != null) {
+									String username = user.optString("user", "");
+									String password = user.optString("password","");
+
+									if (!username.equals("") && !password.equals("")) {
+										passwords.put(username,password);
+									}
+
+								}
+							}
+
+						} else {
+							//array didnt exist
+						}
+
+					} catch (JSONException e) {
+						//malformed data
+					}
+
+				} finally {
+					in.close();
+				}
+			} catch (IOException ex) {
+				//couldnt open file
+			}
+		}
+	}
+
+	public void sendToUser (String nutzer, String message) {
+
+	    nutzerListe.get(nutzer).send(message);
 
     }
 
