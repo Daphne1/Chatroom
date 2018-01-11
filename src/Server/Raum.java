@@ -10,27 +10,32 @@ public class Raum {
 		this.name = raumName;
 	}
 	
-	public int getNumberOfPersons (LinkedList<ClientThread> nutzerThreads) {
+	protected int getNumberOfPersons() {
 		return nutzerThreads.size();
 	}
-	public void removeUser(ClientThread userThread) {
+	protected void removeUser(ClientThread userThread) {
 		nutzerThreads.remove(userThread);
 	}
-	public void addUser(ClientThread userThread) {
+	protected void addUser(ClientThread userThread) {
 		nutzerThreads.add(userThread);
 	}
 
-	public String getName() {
+	protected String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 	}
 
-	public LinkedList<ClientThread> getNutzerThreads() {
+	protected LinkedList<ClientThread> getNutzerThreads() {
 		return nutzerThreads;
 	}
-	public void setNutzerThreads(LinkedList<ClientThread> nutzerThreads) {
+	protected void setNutzerThreads() {
 		this.nutzerThreads = nutzerThreads;
+	}
+
+	@Override
+	public String toString() {
+		return name + " (" + getNumberOfPersons() + " Benutzer)";
 	}
 }

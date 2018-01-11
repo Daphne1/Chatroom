@@ -13,20 +13,24 @@ import java.util.HashMap;
 //SINGLETON
 public class Client {
 
-    private static Client INSTANCE = new Client();
+//    private static Client INSTANCE = new Client();
 
+/*
     public static synchronized Client getInstance() {
         return INSTANCE;
     }
+*/
 
 	private JPanel mainPanel;
-	private JTextField TextField1;
+	private JTextField inputField;
 	private JLabel RoomLabel;
 	private JButton sendButton;
 	private JTabbedPane tabbedPane1;
-	private JList list2;
-	private JList list1;
-	private JTextArea TextArea1;
+	private JList userlist;
+	private JList roomlist;
+    private JPanel Benutzer;
+    private JPanel Raeume;
+    private JTextArea clientLog;
 
 	private Socket server;
 	private PrintWriter printWriterOutputStream;
@@ -35,23 +39,27 @@ public class Client {
 	private boolean enteredPassword = false;
 	private String user;
 	private String pw;
+	private BufferedReader bis;
 
     //ROOMNAME, STRING
 	private HashMap<String, String> RoomTexts;
 
-	public Client() {
+    private DefaultListModel listUser = new DefaultListModel();
+    private DefaultListModel listRooms = new DefaultListModel();
 
-        appendMessage("Enter Username, then password!");
+
+
+	public Client() {
 
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 
 				if (!enteredUser) {
-					user = TextField1.getText();
+					user = inputField.getText();
 					enteredUser = true;
 				} else if (!enteredPassword) {
-					pw = TextField1.getText();
+					pw = inputField.getText();
 					enteredPassword = true;
 
                     JSONObject loginrequest = new JSONObject()
@@ -63,7 +71,7 @@ public class Client {
 
 				} else {
 
-				    String message = TextField1.getText();
+				    String message = inputField.getText();
                     appendMessage(message);
 
                     JSONObject request = new JSONObject()
@@ -74,26 +82,29 @@ public class Client {
 
                 }
 
-				TextField1.setText("");
+				inputField.setText("");
 			}
 		});
 	}
 
-	// der Client.Client kann Nachrichten über den printWriterOutputStream senden
-	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
-	// Nachrichtenansammlung geschickt wird
-	public static void senden(String message, PrintWriter printWriterOutputStream) {
+	private void GUI_start() {
+        JFrame clientFrame = new JFrame("Client Fenster");
+        clientFrame.setContentPane(mainPanel);
+        clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        clientFrame.pack();
+        clientFrame.setVisible(true);
+    }
+
+	public void senden(String message, PrintWriter printWriterOutputStream) {
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
-	
-	// Nachrichten koennen vom Server.Server entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
-	static String annehmen(BufferedReader bufferedReaderInputStream) {
+
+	String annehmen() {
 		try {
-			return bufferedReaderInputStream.readLine(); 
+			return bis.readLine();
 		} catch (IOException e) {
-			System.out.println("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
+            appendMessage("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
 			e.printStackTrace();
 			return null;
 		}
@@ -106,40 +117,64 @@ public class Client {
 
 	public void startClient() {
 		try {
+            GUI_start();
+
 			Socket server = new Socket("localhost", 3456);
 
 			// in
 			InputStream inputStream = server.getInputStream();
-			BufferedReader bufferedReaderInputStream = new BufferedReader(new InputStreamReader(inputStream));
+			this.bis = new BufferedReader(new InputStreamReader(inputStream));
 
 			// out
 			OutputStream outputStream = server.getOutputStream();
 			printWriterOutputStream = new PrintWriter(outputStream, true);
 
 
-			JFrame clientFrame = new JFrame("Client Fenster");
-			clientFrame.setContentPane(mainPanel);
-			clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			clientFrame.pack();
-			clientFrame.setVisible(true);
 
-			// damit gleichzeitig gesendet und empfangen werden kann hat jeder Client.Client zwei eigene Threads
-			// startet Client.sendenThread und Client.empfangenThread
-			//Client.sendenThread sendet = new Client.sendenThread(printWriterOutputStream);
-			//sendet.start();
-            empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
-            empfaengt.start();
+
+            appendMessage("Enter Username, then password!");
+            loop();
+            /*empfangenThread empfaengt = new empfangenThread(bis, server, this);
+            empfaengt.start();*/
 
 		} catch(UnknownHostException e) {
-			System.out.println("Can't find host.");
+			appendMessage("Can't find host.");
 		} catch (IOException e) {
-			System.out.println("Error connecting to host.");
+			appendMessage("Error connecting to host.");
 		}
 	}
 
-	protected synchronized void appendMessage (String message) {
-		TextArea1.append("\n");
-		TextArea1.append(message);
-	}
-}
+    private void loop() {
+        while(true) {
+            String ankommendeNachricht = annehmen();
+            if (ankommendeNachricht != null) {
+                appendMessage(ankommendeNachricht);
+            } else {
+                appendMessage("Client geschlossen. Keine weiteren Informationen. \n");
+                System.exit(0);
+            }
+        }
+    }
 
+	protected void appendMessage (String message) {
+		clientLog.append("\n");
+		clientLog.append(message);
+		System.out.println(message + "\n");
+		clientLog.setCaretPosition(clientLog.getDocument().getLength());
+	}
+
+    /*protected void updateLists (HashMap<String, ClientThread> userlist, HashMap<String, Raum> roomlist) {
+        listUser.clear();
+        listRooms.clear();
+        for(String key : userlist.keySet()) {
+            listUser.addElement(userlist.get(key));
+        }
+        for(String key : roomlist.keySet()) {
+            listRooms.addElement(roomlist.get(key));
+        }
+        userlist.setModel(listUser);
+        roomlist.setModel(listRooms);
+
+        // TODO
+    }*/
+}

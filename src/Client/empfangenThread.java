@@ -20,16 +20,17 @@ class empfangenThread extends Thread {
 	}
 
 	public void run(){
-		// empfängt die Nachrichten vom Server.Server über die Methode annehmen()
-		// gibt diese aus, solange der Server.Server läuft
+		// loop();
+	}
+
+	/*private void loop() {
 		while(true) {
-			String ankommendeNachricht = Client.annehmen(bis);
+			String ankommendeNachricht = Client.annehmen();
 			if (ankommendeNachricht != null) {
-				System.out.println(ankommendeNachricht);
 				client.appendMessage(ankommendeNachricht);
 			} else {
 				System.exit(0);
 			}
 		}
-	}
+	}*/
 }

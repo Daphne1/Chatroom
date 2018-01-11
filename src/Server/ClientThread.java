@@ -28,12 +28,17 @@ class ClientThread extends Thread {
 		this.server = server;
 	}
 
-	public void changeRoom (Raum neuerRaum) {
+	protected void switchRoom (Raum neuerRaum) {
+		server.log(name + " wechselt vom Raum " + raum + " zu " + neuerRaum);
+		sendToRoom(name + " hat zum Raum '" + neuerRaum.getName() + "' gewechselt.");
+		raum.removeUser(this);
 		raum = neuerRaum;
+		raum.addUser(this);
+		sendToRoom(name + " ist dem Raum beigetreten.");
 	}
 
 
-	public boolean checkPassword (String passwort) {
+	protected boolean checkPassword (String passwort) {
 		return server.checkUserPassword(name,passwort);
 	}
 
@@ -44,36 +49,52 @@ class ClientThread extends Thread {
 			
 			pWriterOutputStream.println(message);
 			pWriterOutputStream.flush();
-		} catch (IOException e) { System.out.println("Fehler beim Senden der Nachricht des Clients."); }
+		} catch (IOException e) { server.log("Fehler beim Senden der Nachricht des Clients."); }
 	}
 	
 	void sendToRoom (String message) {
-		for (int p=0; p < raum.getNutzerThreads().size(); p++) {
+		/*for (int p=0; p < raum.getNumberOfPersons(); p++) {
 			raum.getNutzerThreads().get(p).send(message);
+		}*/
+		for (ClientThread ct : raum.getNutzerThreads()) {
+			ct.send(message);
 		}
 	}
 
 	String accept(BufferedReader inputStream) {
 		try { 
 			String input = inputStream.readLine();
+			server.log(input);
 			return input; 
 		} catch (IOException e) {
-			System.out.println("Ankommende Nachrichten werden nicht akzeptiert.");
+			server.log("Ankommende Nachrichten werden nicht akzeptiert.");
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
-	public void run(){ 
+
+	@Override
+	public String toString() {
+		return "[" + raum.getName() + "] /t" + name;
+	}
+
+
+
+	public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
-			System.out.println("Server.ClientThread läuft");
+			server.log("Server.ClientThread läuft");
 			InputStream inputStream = client.getInputStream();
 			OutputStream outputStream = client.getOutputStream();
 			BufferedReader input= new BufferedReader(new InputStreamReader(inputStream));
 			String name = "", passwort = "";
 
+			raum = (Raum) server.getNutzerListeHashMap().get("Lobby");
+			switchRoom(raum);
+
 			String startupMessage = accept(input);
+
+
 
 			try {
                 JSONObject credentials = new JSONObject(startupMessage);
@@ -85,6 +106,7 @@ class ClientThread extends Thread {
 			    //couldnt read / malformed syntax
             }
 
+            System.out.println("Hallihallo: :) :) ):");
 			while(true) {
 
 				if (server.userExists(name)) {
@@ -111,15 +133,12 @@ class ClientThread extends Thread {
 
 					    send(answer.toString());
 
-						//System.out.println("Else");
-
-
 					}
 				} else {
 
 				    server.createUser(name,passwort);
 				    raum = server.getRaum("Lobby");
-					System.out.println("Neuer Account erstellt: \t" + name);
+					server.log("Neuer Account erstellt: \t" + name);
 
 					JSONObject answer = new JSONObject()
                             .put("type","login")
@@ -166,6 +185,8 @@ class ClientThread extends Thread {
 			sendToRoom(loginAnnouncement.toString());
 
 			while(true) {
+				System.out.println("Zweite Schleife gestartet. \n");
+
 				String in = accept(input);
 
 				JSONObject message = null;
@@ -189,10 +210,10 @@ class ClientThread extends Thread {
                         send("Neuer Chat: ");
                         String neuerRaum = in;
                     } else if (in != null) {
-                        System.out.println(name + ": \t" + in);
+                        server.log(name + ": \t" + in);
                         sendToRoom(name + ":\t" + in);
                     } else {
-                        System.out.println(name + " hat seine Verbindung abgebrochen");
+                        server.log(name + " hat seine Verbindung abgebrochen");
                         sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
                         break;
                     }
@@ -204,9 +225,9 @@ class ClientThread extends Thread {
         } finally {
 			if ( client != null ) try {
 				client.close();
-				server.removeNutzer(name);
-                //Server.getRaumListe().remove(name); wtf's this supposed to do?!
+				server.removeNutzer(this);
 			} catch ( IOException e ) { }
 		}
 	}
+
 }
