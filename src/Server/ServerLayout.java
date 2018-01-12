@@ -24,38 +24,34 @@ public class ServerLayout {
     private JMenu Raum;
     private JMenu Operationen;
 
+    DefaultListModel user = new DefaultListModel();
+    DefaultListModel rooms = new DefaultListModel();
+
     private static ServerLayout INSTANCE;
 
-    public ServerLayout(Server server) {
-
-        String[] options = {
-                "Raum umbenennen",
-                "Raum löschen",
-                "Raum erstellen",
-                "Benutzer verwarnen",
-                "Benutzer kicken",
-                "Benutzer ausschließen",
-                "Server umbennen",
-                "Passwortdatei lesen"
-        };
-        chooseAction = new JComboBox(options);
+    ServerLayout(Server server) {
 
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 response.setText("");
+                System.out.println(chooseAction.getSelectedItem());
                 switch ((String) chooseAction.getSelectedItem()) {
+
                     case "Raum umbenennen":
                         response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");
                         server.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
+                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
                     case "Raum löschen":
                         response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
                         server.deleteRoom((Raum) roomList.getSelectedValue());
+                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
                     case "Raum erstellen":
                         server.newRoom(textField1.getText());
                         response.setText("Raum " + textField1.getText() + "wurde erstellt.");
+                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
                     case "Benutzer verwarnen":
                         server.warnUser((ClientThread) userList.getSelectedValue());
@@ -64,14 +60,17 @@ public class ServerLayout {
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
                         server.kickUser((ClientThread) userList.getSelectedValue());
+                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server ausgeschlossen.");
+                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
 //                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
                     case "Server umbennen":
                         server.editServername(textField1.getText());
                         response.setText("Der Server " + server.serverName + " wurde in " + textField1.getText() + "umbenannt.");
+                        serverlogInfo.setText("Server '" + textField1.getText() + "' ist online.");
                         break;
                     case "Passwortdatei lesen":
 //                        TODO s.readPasswordDatei();

@@ -53,7 +53,7 @@ public class Server {
 
 	    try {
 			GUI = new ServerLayout(this);
-			GUI.start_gui(GUI);
+			GUI.start_gui();
 			GUI.setServerlogInfo(serverName);
             log("Server ist gestartet!");
             this.socket = new ServerSocket(PORT);
@@ -72,8 +72,6 @@ public class Server {
             AcceptorThread acceptor = new AcceptorThread(this, socket);
             acceptor.start();
 
-            GUI = new ServerLayout();
-            GUI.start_gui();
 
 
         } catch ( IOException e ) {
@@ -118,6 +116,10 @@ public class Server {
 	public Set<String> getRaumListe() {
 		return raumListe.keySet();
 	}
+
+    protected HashMap getRaumListeHashMap() {
+        return nutzerListe;
+    }
 
 	public Raum getRaum (String name) {
 	    return raumListe.containsKey(name) ? raumListe.get(name) : null;

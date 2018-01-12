@@ -45,17 +45,14 @@ public class Client {
     private DefaultListModel listUser = new DefaultListModel();
     private DefaultListModel listRooms = new DefaultListModel();
 
-	private Client() {
-
-	    boolean started = startClient();
-
-	    if (!started) {
-	        System.exit(0);
-        }
-
-
 
 	public Client() {
+
+        boolean started = startClient();
+
+        if (!started) {
+            System.exit(0);
+        }
 
         appendMessage("Enter Username, then password!");
 		sendButton.addActionListener(new ActionListener() {
@@ -146,10 +143,10 @@ public class Client {
 
         if (array != null) {
 
-			((DefaultListModel<String>)list1.getModel()).clear();
+			listUser.clear();
 
         	for (int i = 0; i < array.length(); i++) {
-                ((DefaultListModel<String>)list1.getModel()).addElement(array.optString(i,""));
+                listUser.addElement(array.optString(i,""));
             }
         }
 
@@ -159,10 +156,10 @@ public class Client {
 
         if (array != null) {
 
-			((DefaultListModel<String>)list2.getModel()).clear();
+			listRooms.clear();
 
             for (int i = 0; i < array.length(); i++) {
-                ((DefaultListModel<String>)list2.getModel()).addElement(array.optString(i,""));
+                listRooms.addElement(array.optString(i,""));
             }
         }
 

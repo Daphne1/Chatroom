@@ -32,9 +32,9 @@ class ClientThread extends Thread {
     protected void switchRoom (Raum neuerRaum) {
         server.log(name + " wechselt vom Raum " + raum + " zu " + neuerRaum);
         sendToRoom(name + " hat zum Raum '" + neuerRaum.getName() + "' gewechselt.");
-        raum.removeUser(this);
+        raum.removeUser(name);
         raum = neuerRaum;
-        raum.addUser(this);
+        raum.addUser(name);
         sendToRoom(name + " ist dem Raum beigetreten.");
     }
 
@@ -91,13 +91,10 @@ class ClientThread extends Thread {
 	}
 
 
-
-	public void run(){
-
 	public void kick() {
 	    try {
 
-            server.removeNutzer(name);
+            server.removeNutzer(this);
             raum.removeUser(name);
             valid = false;
 
@@ -312,7 +309,7 @@ class ClientThread extends Thread {
                         if ( client != null ) {
                             try {
                                 raum.removeUser(name);
-                                server.removeNutzer(name);
+                                server.removeNutzer(this);
                                 client.close();
                                 //Server.getRaumListe().remove(name); wtf's this supposed to do?!
                             } catch (IOException e) {
@@ -334,7 +331,7 @@ class ClientThread extends Thread {
 
 			if ( client != null ) {
                 try {
-                    server.removeNutzer(name);
+                    server.removeNutzer(this);
                     raum.removeUser(name);
                     client.close();
                     //Server.getRaumListe().remove(name); wtf's this supposed to do?!

@@ -120,14 +120,26 @@
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <editable value="false"/>
+              <model>
+                <item value="Raum umbenennen"/>
+                <item value="Raum löschen"/>
+                <item value="Raum erstellen"/>
+                <item value="Benutzer verwarnen"/>
+                <item value="Benutzer kicken"/>
+                <item value="Benutzer ausschließen"/>
+                <item value="Server umbennen"/>
+                <item value="Passwortdatei lesen"/>
+              </model>
+            </properties>
           </component>
           <component id="37c26" class="javax.swing.JButton" binding="button1" default-binding="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="ausführen"/>
             </properties>
           </component>
           <component id="8186" class="javax.swing.JLabel" binding="response">
