@@ -148,6 +148,8 @@ public class Client {
         	for (int i = 0; i < array.length(); i++) {
                 listUser.addElement(array.optString(i,""));
             }
+
+
         }
 
     }
@@ -207,17 +209,6 @@ public class Client {
 			OutputStream outputStream = server.getOutputStream();
 			printWriterOutputStream = new PrintWriter(outputStream, true);
 
-
-			JFrame clientFrame = new JFrame("Client Fenster");
-			clientFrame.setContentPane(mainPanel);
-			clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			clientFrame.pack();
-			clientFrame.setVisible(true);
-
-			// damit gleichzeitig gesendet und empfangen werden kann hat jeder Client.Client zwei eigene Threads
-			// startet Client.sendenThread und Client.empfangenThread
-			//Client.sendenThread sendet = new Client.sendenThread(printWriterOutputStream);
-			//sendet.start();
             empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
             empfaengt.start();
 
@@ -239,18 +230,17 @@ public class Client {
 		clientLog.setCaretPosition(clientLog.getDocument().getLength());
 	}
 
-    /*protected void updateLists (HashMap<String, ClientThread> userlist, HashMap<String, Raum> roomlist) {
-        listUser.clear();
+
+    protected void updateLists (String[] user, String[] rooms) {
+	    listUser.clear();
         listRooms.clear();
-        for(String key : userlist.keySet()) {
-            listUser.addElement(userlist.get(key));
+        for(String s : user) {
+            listUser.addElement(s);
         }
-        for(String key : roomlist.keySet()) {
-            listRooms.addElement(roomlist.get(key));
+        for(String s : rooms) {
+            listRooms.addElement(s);
         }
         userlist.setModel(listUser);
         roomlist.setModel(listRooms);
-
-        // TODO
-    }*/
+    }
 }

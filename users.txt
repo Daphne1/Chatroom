@@ -1,1 +1,1 @@
-{"users":[{"password":"asdf","banned":false,"user":"asdf"}]}
+{"users":[{"password":"Lammert","banned":false,"user":"Anton"},{"password":"Knoten","banned":false,"user":"Hallo"},{"password":"Auer","banned":false,"user":"Daphne"},{"password":"asdf","banned":false,"user":"asdf"},{"password":"Auer","banned":false,"user":"DAphne"}]}
