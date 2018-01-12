@@ -73,6 +73,7 @@ class ClientThread extends Thread {
 
             server.removeNutzer(name);
             raum.removeUser(name);
+            valid = false;
 
 	        if (client != null)
 	            client.close();

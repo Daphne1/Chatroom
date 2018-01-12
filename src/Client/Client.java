@@ -130,7 +130,10 @@ public class Client {
     public void addRooms (JSONArray array) {
 
         if (array != null) {
-            for (int i = 0; i < array.length(); i++) {
+
+			((DefaultListModel<String>)list1.getModel()).clear();
+
+        	for (int i = 0; i < array.length(); i++) {
                 ((DefaultListModel<String>)list1.getModel()).addElement(array.optString(i,""));
             }
         }
@@ -140,6 +143,9 @@ public class Client {
     public void addUsers (JSONArray array) {
 
         if (array != null) {
+
+			((DefaultListModel<String>)list2.getModel()).clear();
+
             for (int i = 0; i < array.length(); i++) {
                 ((DefaultListModel<String>)list2.getModel()).addElement(array.optString(i,""));
             }

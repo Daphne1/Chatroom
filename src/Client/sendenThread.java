@@ -34,7 +34,7 @@ class sendenThread extends Thread {
 
 				// ansonsten wird die eingegebene Nachricht über den printWriterOutputStream
 				// über die Methode senden() an den Server.Server gesendet
-				Client.senden(tastatureingabe, pout);
+				Client.getInstance().senden(tastatureingabe, pout);
 			}
 		} catch (IOException e) { System.out.println("Der Client.sendenThread funktioniert nicht mehr."); }
 	}
