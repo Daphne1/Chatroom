@@ -1,8 +1,15 @@
 package Server;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.*;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -26,10 +33,12 @@ public class Server {
 	//roomname - room
 	private HashMap<String, Raum> raumListe;
 
-	//User - Password
-	private HashMap<String, String> passwords;
 
-	private ServerLayout GUI;
+    private ServerLayout GUI;
+
+//  User - Password
+    private HashMap<String, Map.Entry<String,Boolean>> passwords;
+
 
 	private Server() {
 
@@ -39,6 +48,9 @@ public class Server {
 	    this.nutzerListe = new HashMap<>();
 	    this.passwords = new HashMap<>();
 
+	    //read passwords
+	    loadUserData();
+
 	    try {
 			GUI = new ServerLayout(this);
 			GUI.start_gui(GUI);
@@ -47,13 +59,22 @@ public class Server {
             this.socket = new ServerSocket(PORT);
             log("Server hat gestartet \nZum Beenden '/stop' eingeben.");
 
-            newRoom("Lobby");
+            // newRoom("Lobby");
+            Raum lobby = new Raum("Lobby");
+            raumListe.put(lobby.getName(), lobby);
+
+            Raum lobby2 = new Raum("Lobby2");
+            raumListe.put(lobby2.getName(), lobby2);
 
             // Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
             log("Vorhandene Räume: " + raumListe.size());
 
             AcceptorThread acceptor = new AcceptorThread(this, socket);
             acceptor.start();
+
+            GUI = new ServerLayout();
+            GUI.start_gui();
+
 
         } catch ( IOException e ) {
 
@@ -71,10 +92,15 @@ public class Server {
 	//passwords need a lock
 	public boolean checkUserPassword(String user, String password) {
 	    if (passwords.containsKey(user)) {
-	        return passwords.get(user).equals(password);
+	        //password match
+	        return passwords.get(user).getKey().equals(password);
         } else {
 	        return false;
         }
+    }
+
+    public boolean isBanned(String user) {
+	    return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
     }
 
     public boolean userExists(String user) {
@@ -82,7 +108,10 @@ public class Server {
     }
 
     public void createUser(String user, String password) {
-	    passwords.put(user,password);
+	    passwords.put(user,new AbstractMap.SimpleEntry<String, Boolean>(password,false));
+
+	    //save passwords
+	    saveUserData();
     }
 
     //raumliste needs a lock
@@ -91,7 +120,7 @@ public class Server {
 	}
 
 	public Raum getRaum (String name) {
-	    return raumListe.containsKey(name) ? null : raumListe.get(name);
+	    return raumListe.containsKey(name) ? raumListe.get(name) : null;
     }
 
 	//nutzerliste needs a lock
@@ -109,10 +138,134 @@ public class Server {
 	    GUI.setName("Lobby");
     }
 
-    public void removeNutzer(ClientThread ct) {
-		nutzerListe.remove(ct);
+    public void removeNutzer(ClientThread name) {
+		nutzerListe.remove(name);
 		updateAllLists(nutzerListe, raumListe);
 	}
+
+    private void saveUserData() {
+
+		FileOutputStream out = null;
+
+		try {
+
+			File users = new File("users.txt");
+			users.createNewFile(); // if file already exists will do nothing
+			FileOutputStream stream = new FileOutputStream(users, false);
+
+			JSONObject allData = new JSONObject();
+			JSONArray allUsers = new JSONArray();
+
+			for (Map.Entry<String,Map.Entry<String,Boolean>> _x : passwords.entrySet()) {
+
+				JSONObject user = new JSONObject()
+						.put(
+								"user",
+								_x.getKey()
+						)
+                        .put(
+                                "password",
+                                _x.getValue().getKey()
+                        )
+                        .put(
+                                "banned",
+                                _x.getValue().getValue()
+                        );
+
+				allUsers.put(user);
+
+			}
+
+			allData.put("users",allUsers);
+			stream.write(allData.toString().getBytes());
+
+		} catch (FileNotFoundException e) {
+			//couldnt create file
+		} catch (IOException e) {
+			//couldnt open/create file
+		}
+	}
+
+	private void loadUserData() {
+
+		File users = new File("users.txt");
+		if (users.isFile() && users.canRead()) {
+			try {
+				FileInputStream in = new FileInputStream(users);
+				try {
+					String content = "";
+					int c;
+					while ((c = in.read()) != -1) {
+						content += (char)c;
+					}
+
+					try {
+						JSONObject json = new JSONObject(content);
+
+						JSONArray usersarray = json.optJSONArray("users");
+
+						if (usersarray != null) {
+
+							for (int i = 0; i < usersarray.length(); i++) {
+								JSONObject user = usersarray.optJSONObject(i);
+
+								if (user != null) {
+									String username = user.optString("user", "");
+									String password = user.optString("password","");
+                                    Boolean banned = user.optBoolean("banned",false);
+
+									if (!username.equals("") && !password.equals("")) {
+										passwords.put(
+										        username,
+                                                new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
+                                        );
+									}
+
+								}
+							}
+
+						} else {
+							//array didnt exist
+						}
+
+					} catch (JSONException e) {
+						//malformed data
+					}
+
+				} finally {
+					in.close();
+				}
+			} catch (IOException ex) {
+				//couldnt open file
+			}
+		}
+	}
+
+	public void sendToUser (String nutzer, String message) {
+
+	    nutzerListe.get(nutzer).send(message);
+
+    }
+
+    public void banUser(String user) {
+
+	    if (passwords.containsKey(user)) {
+
+	        passwords.get(user).setValue(true);
+
+        }
+
+        saveUserData();
+
+	    kickUser(user);
+    }
+
+    public void kickUser(String user) {
+
+	    if (nutzerListe.containsKey(user))
+	        nutzerListe.get(user).kick();
+
+    }
 
 	public static void main(String[] args) throws IOException {
 

@@ -1,5 +1,6 @@
 package Client;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -13,21 +14,19 @@ import java.util.HashMap;
 //SINGLETON
 public class Client {
 
-//    private static Client INSTANCE = new Client();
+    private static Client INSTANCE = new Client();
 
-/*
     public static synchronized Client getInstance() {
         return INSTANCE;
     }
-*/
 
 	private JPanel mainPanel;
 	private JTextField inputField;
 	private JLabel RoomLabel;
 	private JButton sendButton;
 	private JTabbedPane tabbedPane1;
-	private JList userlist;
-	private JList roomlist;
+	private JList<String> userlist;
+	private JList<String> roomlist;
     private JPanel Benutzer;
     private JPanel Raeume;
     private JTextArea clientLog;
@@ -37,20 +36,28 @@ public class Client {
 
 	private boolean enteredUser = false;
 	private boolean enteredPassword = false;
+	private boolean loginConfirmed = false;
 	private String user;
 	private String pw;
-	private BufferedReader bis;
 
     //ROOMNAME, STRING
 	private HashMap<String, String> RoomTexts;
-
     private DefaultListModel listUser = new DefaultListModel();
     private DefaultListModel listRooms = new DefaultListModel();
+
+	private Client() {
+
+	    boolean started = startClient();
+
+	    if (!started) {
+	        System.exit(0);
+        }
 
 
 
 	public Client() {
 
+        appendMessage("Enter Username, then password!");
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -69,15 +76,39 @@ public class Client {
 
                     senden(loginrequest.toString(), printWriterOutputStream);
 
-				} else {
+				} else if (loginConfirmed) {
 
 				    String message = inputField.getText();
                     appendMessage(message);
 
-                    JSONObject request = new JSONObject()
+                    JSONObject request = new JSONObject();
+
+				    if (message.startsWith("/")) {
+
+				        //command
+                        if (message.startsWith("/abmelden")) {
+
+                            request
+                                    .put("type","logout")
+                                    .put("message","");
+
+                        } else if (message.startsWith("/changeroom")) {
+                            int indexfirstspace = message.indexOf(' ');
+                            String param = message.substring(indexfirstspace + 1);
+
+                            request
+                                    .put("type","changeroom")
+                                    .put("message",param);
+
+                        }
+
+                    } else {
+
+				        //normal message
+				        request
                             .put("type", "message")
                             .put("message", message);
-
+                    }
                     senden(request.toString(), printWriterOutputStream);
 
                 }
@@ -95,66 +126,114 @@ public class Client {
         clientFrame.setVisible(true);
     }
 
+    public void confirmLogin() {
+	    loginConfirmed = true;
+    }
+
+    public void resetLogin(String error) {
+	    loginConfirmed = false;
+	    enteredPassword = false;
+	    enteredUser = false;
+
+	    appendMessage(error);
+    }
+
+    public boolean isLoginConfirmed() {
+	    return loginConfirmed;
+    }
+
+    public void addRooms (JSONArray array) {
+
+        if (array != null) {
+
+			((DefaultListModel<String>)list1.getModel()).clear();
+
+        	for (int i = 0; i < array.length(); i++) {
+                ((DefaultListModel<String>)list1.getModel()).addElement(array.optString(i,""));
+            }
+        }
+
+    }
+
+    public void addUsers (JSONArray array) {
+
+        if (array != null) {
+
+			((DefaultListModel<String>)list2.getModel()).clear();
+
+            for (int i = 0; i < array.length(); i++) {
+                ((DefaultListModel<String>)list2.getModel()).addElement(array.optString(i,""));
+            }
+        }
+
+    }
+
+	// der Client.Client kann Nachrichten über den printWriterOutputStream senden
+	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
+	// Nachrichtenansammlung geschickt wird
 	public void senden(String message, PrintWriter printWriterOutputStream) {
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
 
-	String annehmen() {
+	/*
+	// Nachrichten koennen vom Server.Server entgegengenommen werden
+	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
+	static String annehmen(BufferedReader bufferedReaderInputStream) {
 		try {
-			return bis.readLine();
+			return bufferedReaderInputStream.readLine(); 
 		} catch (IOException e) {
-            appendMessage("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
+			appendMessage("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
 			e.printStackTrace();
 			return null;
 		}
 	}
+	*/
 	
 	
 	public static void main(String args[]) {
-		new Client().startClient();
+		Client.getInstance();
 	}
 
-	public void startClient() {
+	private boolean startClient() {
 		try {
+		    //??
             GUI_start();
 
 			Socket server = new Socket("localhost", 3456);
 
 			// in
 			InputStream inputStream = server.getInputStream();
-			this.bis = new BufferedReader(new InputStreamReader(inputStream));
+			BufferedReader bufferedReaderInputStream = new BufferedReader(new InputStreamReader(inputStream));
 
 			// out
 			OutputStream outputStream = server.getOutputStream();
 			printWriterOutputStream = new PrintWriter(outputStream, true);
 
 
+			JFrame clientFrame = new JFrame("Client Fenster");
+			clientFrame.setContentPane(mainPanel);
+			clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			clientFrame.pack();
+			clientFrame.setVisible(true);
 
+			// damit gleichzeitig gesendet und empfangen werden kann hat jeder Client.Client zwei eigene Threads
+			// startet Client.sendenThread und Client.empfangenThread
+			//Client.sendenThread sendet = new Client.sendenThread(printWriterOutputStream);
+			//sendet.start();
+            empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
+            empfaengt.start();
 
-            appendMessage("Enter Username, then password!");
-            loop();
-            /*empfangenThread empfaengt = new empfangenThread(bis, server, this);
-            empfaengt.start();*/
+            return true;
 
 		} catch(UnknownHostException e) {
 			appendMessage("Can't find host.");
 		} catch (IOException e) {
 			appendMessage("Error connecting to host.");
 		}
-	}
 
-    private void loop() {
-        while(true) {
-            String ankommendeNachricht = annehmen();
-            if (ankommendeNachricht != null) {
-                appendMessage(ankommendeNachricht);
-            } else {
-                appendMessage("Client geschlossen. Keine weiteren Informationen. \n");
-                System.exit(0);
-            }
-        }
-    }
+		return false;
+	}
 
 	protected void appendMessage (String message) {
 		clientLog.append("\n");

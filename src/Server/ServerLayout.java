@@ -24,9 +24,7 @@ public class ServerLayout {
     private JMenu Raum;
     private JMenu Operationen;
 
-    private DefaultListModel rooms = new DefaultListModel();
-    private DefaultListModel user = new DefaultListModel();
-    private Server s;
+    private static ServerLayout INSTANCE;
 
     public ServerLayout(Server server) {
 
@@ -49,30 +47,30 @@ public class ServerLayout {
                 switch ((String) chooseAction.getSelectedItem()) {
                     case "Raum umbenennen":
                         response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");
-                        s.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
+                        server.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
                         break;
                     case "Raum löschen":
                         response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
-                        s.deleteRoom((Raum) roomList.getSelectedValue());
+                        server.deleteRoom((Raum) roomList.getSelectedValue());
                         break;
                     case "Raum erstellen":
-                        s.newRoom(textField1.getText());
+                        server.newRoom(textField1.getText());
                         response.setText("Raum " + textField1.getText() + "wurde erstellt.");
                         break;
                     case "Benutzer verwarnen":
-                        s.warnUser((ClientThread) userList.getSelectedValue());
+                        server.warnUser((ClientThread) userList.getSelectedValue());
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
                         break;
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        s.kickUser((ClientThread) userList.getSelectedValue());
+                        server.kickUser((ClientThread) userList.getSelectedValue());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server ausgeschlossen.");
 //                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
                     case "Server umbennen":
-                        s.editServername(textField1.getText());
+                        server.editServername(textField1.getText());
                         response.setText("Der Server " + server.serverName + " wurde in " + textField1.getText() + "umbenannt.");
                         break;
                     case "Passwortdatei lesen":
@@ -82,10 +80,9 @@ public class ServerLayout {
                 }
             }
         });
-        this.s = server;
     }
 
-    public void start_gui(ServerLayout INSTANCE) {
+    public void start_gui() {
         JFrame frame = new JFrame("ServerLayout");
         frame.setContentPane(this.ROOT);
 /*
