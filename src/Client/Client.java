@@ -111,8 +111,6 @@ public class Client {
 
 	public void confirmLogin() {
 	    loginConfirmed = true;
-
-	    appendMessage("Du bist nun eingeloggt");
     }
 
     public void resetLogin(String error) {

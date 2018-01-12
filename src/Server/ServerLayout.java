@@ -18,11 +18,8 @@ public class ServerLayout {
     private JMenu Raum;
     private JMenu Operationen;
 
-    private static ServerLayout INSTANCE;
+    public ServerLayout() {
 
-    public static void main(String[] args) {
-        INSTANCE = new ServerLayout();
-        INSTANCE.start_gui();
     }
 
     public void start_gui() {

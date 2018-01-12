@@ -28,6 +28,8 @@ public class Server {
 
 	//User - Password
 	private HashMap<String, Map.Entry<String,Boolean>> passwords;
+
+	private ServerLayout layout;
 		
 	private Server() {
 
@@ -48,11 +50,18 @@ public class Server {
             Raum lobby = new Raum("Lobby");
             raumListe.put(lobby.getName(), lobby);
 
+            Raum lobby2 = new Raum("Lobby2");
+            raumListe.put(lobby2.getName(), lobby2);
+
             // Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
             System.out.println("Vorhandene Räume: " + raumListe.size());
 
             AcceptorThread acceptor = new AcceptorThread(this, socket);
             acceptor.start();
+
+            layout = new ServerLayout();
+            layout.start_gui();
+
 
         } catch ( IOException e ) {
 
@@ -78,7 +87,7 @@ public class Server {
     }
 
     public boolean isBanned(String user) {
-	    return (passwords.containsKey(user)) ? !passwords.get(user).getValue() : false;
+	    return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
     }
 
     public boolean userExists(String user) {
@@ -98,7 +107,7 @@ public class Server {
 	}
 
 	public Raum getRaum (String name) {
-	    return raumListe.containsKey(name) ? null : raumListe.get(name);
+	    return raumListe.containsKey(name) ? raumListe.get(name) : null;
     }
 
 	//nutzerliste needs a lock

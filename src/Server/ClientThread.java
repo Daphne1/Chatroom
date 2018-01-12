@@ -165,8 +165,16 @@ class ClientThread extends Thread {
 				}
 			}
 
+
+
             raum = server.getRaum("Lobby");
             raum.addUser(name);
+
+
+
+            ////////////////////////////////////
+            //Sende nutzerliste zum nutzer
+            //-> Funktion
 
 			// send("\nAktuelle Nutzer:");
 			JSONArray onlineListe = new JSONArray();
@@ -180,7 +188,12 @@ class ClientThread extends Thread {
                     .put("status","ok");
 
 			send(nutzer.toString());
+            ////////////////////////////////////
 
+
+            ////////////////////////////////////
+			//sende Raumlist zum User
+            //-> Funktion
             JSONArray raumListe = new JSONArray();
             for (String _x : server.getRaumListe()) {
                 raumListe.put(_x);
@@ -192,12 +205,10 @@ class ClientThread extends Thread {
                     .put("status","ok");
 
             send(raeume.toString());
+            ////////////////////////////////////
 
-			JSONObject loginAnnouncement = new JSONObject()
-                    .put("type","message")
-                    .put("message",name + " hat sich eingeloggt.")
-                    .put("status","ok");
-			sendToRoom(loginAnnouncement.toString());
+
+			sendToRoom(name + " hat sich eingeloggt.");
 
 			while(valid) {
 				String in = accept(input);
@@ -282,8 +293,9 @@ class ClientThread extends Thread {
 				}
 			}
 		} catch ( IOException e ) {
-
+            System.out.println("IO fuckkerino");
         } finally {
+
 			if ( client != null ) {
                 try {
                     server.removeNutzer(name);
@@ -294,6 +306,7 @@ class ClientThread extends Thread {
 
                 }
             }
+
 		}
 	}
 }

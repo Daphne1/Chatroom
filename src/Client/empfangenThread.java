@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by Senfo on 10.01.2018.
@@ -27,7 +28,14 @@ class empfangenThread extends Thread {
 	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
 	private String annehmen() {
 		try {
+
 			return bis.readLine();
+
+		} catch (SocketException e) {
+
+			System.out.println("Die Verbindung wurde unterbrochen.");
+			return null;
+
 		} catch (IOException e) {
 			System.out.println("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
 			e.printStackTrace();
@@ -42,7 +50,7 @@ class empfangenThread extends Thread {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
 
-				System.out.println(ankommendeNachricht);
+				//System.out.println(ankommendeNachricht);
 
 				//switch types
 				JSONObject json = null;
@@ -62,7 +70,10 @@ class empfangenThread extends Thread {
 					if (type.equals("message")) {
 
 						if (client.isLoginConfirmed()) {
-							client.appendMessage(json.optString("message"));
+							String nachricht = json.optString("message", "");
+
+							if (!nachricht.equals(""))
+							    client.appendMessage(nachricht);
 						} else {
 							//no accepted message til logged in
 						}
@@ -79,6 +90,9 @@ class empfangenThread extends Thread {
 
 						if (json.optString("status","ok").equals("ok")) {
 							client.confirmLogin();
+							String nachricht = json.optString("message","");
+                            nachricht = nachricht.equals("") ? "Du bist nun eingeloggt" : nachricht;
+							client.appendMessage( nachricht );
 						} else {
 							client.resetLogin(json.optString("message","Ungültiger Login"));
 						}
@@ -88,6 +102,7 @@ class empfangenThread extends Thread {
 				}
 
 			} else {
+				//connection broke
 				System.exit(0);
 			}
 		}
