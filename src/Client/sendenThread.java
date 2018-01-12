@@ -10,10 +10,10 @@ import java.io.PrintWriter;
  */ // ein Thread dient dem Senden
 class sendenThread extends Thread {
 	// der printWriterOutputStream muss übergeben werden
-	PrintWriter pout;
+	Client c;
 
-	sendenThread(PrintWriter pout) {
-		this.pout = pout;
+	sendenThread(Client c) {
+		this.c = c;
 	}
 
 	public void run(){
@@ -34,7 +34,7 @@ class sendenThread extends Thread {
 
 				// ansonsten wird die eingegebene Nachricht über den printWriterOutputStream
 				// über die Methode senden() an den Server.Server gesendet
-				Client.getInstance().senden(tastatureingabe, pout);
+				c.senden(tastatureingabe);
 			}
 		} catch (IOException e) { System.out.println("Der Client.sendenThread funktioniert nicht mehr."); }
 	}

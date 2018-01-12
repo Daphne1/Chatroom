@@ -66,7 +66,7 @@ class empfangenThread extends Thread {
 				}
 
 				if (json != null) {
-
+					//TODO switch case
 					if (type.equals("message")) {
 
 						if (client.isLoginConfirmed()) {

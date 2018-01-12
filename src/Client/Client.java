@@ -6,19 +6,14 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.*;
 import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 
 
 //SINGLETON
 public class Client {
-
-    private static Client INSTANCE = new Client();
-
-    public static synchronized Client getInstance() {
-        return INSTANCE;
-    }
 
 	private JPanel mainPanel;
 	private JTextField inputField;
@@ -33,14 +28,16 @@ public class Client {
 
 	private Socket server;
 	private PrintWriter printWriterOutputStream;
+    BufferedReader bufferedReaderInputStream;
 
-	private boolean enteredUser = false;
+    private boolean enteredUser = false;
 	private boolean enteredPassword = false;
 	private boolean loginConfirmed = false;
 	private String user;
 	private String pw;
+	private boolean started;
 
-    //ROOMNAME, STRING
+	//ROOMNAME, STRING
 	private HashMap<String, String> RoomTexts;
     private DefaultListModel listUser = new DefaultListModel();
     private DefaultListModel listRooms = new DefaultListModel();
@@ -48,13 +45,24 @@ public class Client {
 
 	public Client() {
 
-        boolean started = startClient();
+        try {
+            server = new Socket("localhost", 3456);
+            appendMessage("erfolgreich zu 'localhost' Port: 3456 verbunden");
 
-        if (!started) {
-            System.exit(0);
+            // in
+            InputStream inputStream = server.getInputStream();
+            bufferedReaderInputStream = new BufferedReader(new InputStreamReader(inputStream));
+
+            // out
+            OutputStream outputStream = server.getOutputStream();
+            printWriterOutputStream = new PrintWriter(outputStream, true);
+
+        } catch(UnknownHostException e) {
+            appendMessage("Can't find host.");
+        } catch (IOException e) {
+            appendMessage("Error connecting to host.");
         }
 
-        appendMessage("Enter Username, then password!");
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -71,7 +79,7 @@ public class Client {
                             .put("user",user)
                             .put("password",pw);
 
-                    senden(loginrequest.toString(), printWriterOutputStream);
+                    senden(loginrequest.toString());
 
 				} else if (loginConfirmed) {
 
@@ -106,7 +114,7 @@ public class Client {
                             .put("type", "message")
                             .put("message", message);
                     }
-                    senden(request.toString(), printWriterOutputStream);
+                    senden(request.toString());
 
                 }
 
@@ -168,7 +176,7 @@ public class Client {
 	// der Client.Client kann Nachrichten über den printWriterOutputStream senden
 	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
 	// Nachrichtenansammlung geschickt wird
-	public void senden(String message, PrintWriter printWriterOutputStream) {
+	public void senden(String message) {
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
@@ -189,47 +197,22 @@ public class Client {
 	
 	
 	public static void main(String args[]) {
-		Client.getInstance();
+		Client C = new Client();
+		C.startClient();
+
+		System.out.println("programm ende");
 	}
 
 	private boolean startClient() {
-		try {
-		    //??
-            GUI_start();
 
-			Socket server = new Socket("localhost", 3456);
+        GUI_start();
 
-			// in
-			InputStream inputStream = server.getInputStream();
-			BufferedReader bufferedReaderInputStream = new BufferedReader(new InputStreamReader(inputStream));
-
-			// out
-			OutputStream outputStream = server.getOutputStream();
-			printWriterOutputStream = new PrintWriter(outputStream, true);
+        empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
+        empfaengt.start();
 
 
-			JFrame clientFrame = new JFrame("Client Fenster");
-			clientFrame.setContentPane(mainPanel);
-			clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			clientFrame.pack();
-			clientFrame.setVisible(true);
+        return true;
 
-			// damit gleichzeitig gesendet und empfangen werden kann hat jeder Client.Client zwei eigene Threads
-			// startet Client.sendenThread und Client.empfangenThread
-			//Client.sendenThread sendet = new Client.sendenThread(printWriterOutputStream);
-			//sendet.start();
-            empfangenThread empfaengt = new empfangenThread(bufferedReaderInputStream, server, this);
-            empfaengt.start();
-
-            return true;
-
-		} catch(UnknownHostException e) {
-			appendMessage("Can't find host.");
-		} catch (IOException e) {
-			appendMessage("Error connecting to host.");
-		}
-
-		return false;
 	}
 
 	protected void appendMessage (String message) {
@@ -250,7 +233,5 @@ public class Client {
         }
         userlist.setModel(listUser);
         roomlist.setModel(listRooms);
-
-        // TODO
     }*/
 }
