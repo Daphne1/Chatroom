@@ -222,16 +222,18 @@ public class Client {
 		clientLog.setCaretPosition(clientLog.getDocument().getLength());
 	}
 
-    /*protected void updateLists (HashMap<String, ClientThread> userlist, HashMap<String, Raum> roomlist) {
-        listUser.clear();
+
+    protected void updateLists (String[] user, String[] rooms) {
+	    listUser.clear();
         listRooms.clear();
-        for(String key : userlist.keySet()) {
-            listUser.addElement(userlist.get(key));
+        for(String s : user) {
+            listUser.addElement(s);
         }
-        for(String key : roomlist.keySet()) {
-            listRooms.addElement(roomlist.get(key));
+        for(String s : rooms) {
+            listRooms.addElement(s);
         }
         userlist.setModel(listUser);
         roomlist.setModel(listRooms);
-    }*/
+    }
+    }
 }
