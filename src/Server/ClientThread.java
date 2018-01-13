@@ -1,6 +1,5 @@
 package Server;
 
-import Server.*;
 import org.json.*;
 import javax.swing.*;
 import java.io.*;
@@ -23,8 +22,10 @@ class ClientThread extends Thread {
 	private JTabbedPane tabbedPane1;
 	private JList list1;
 	private JList list2;
+	private BufferedReader input;
+    PrintWriter pWriterOutputStream;
 
-	ClientThread(Server server, Socket client) {
+    ClientThread(Server server, Socket client) {
 		this.client = client;
 		this.server = server;
 	}
@@ -38,7 +39,7 @@ class ClientThread extends Thread {
         sendToRoom(name + " ist dem Raum beigetreten.");
     }
 
-	public void changeRoom (Raum neuerRaum) {
+	void changeRoom (Raum neuerRaum) {
 		raum = neuerRaum;
 	}
 
@@ -47,14 +48,11 @@ class ClientThread extends Thread {
 		return server.checkUserPassword(name,passwort);
 	}
 
-	synchronized void send(String message) {
-		try {
-			DataOutputStream output = new DataOutputStream(client.getOutputStream());
-			PrintWriter pWriterOutputStream = new PrintWriter(output, true);
-			
+	void send(String message) {
+	    System.out.println("ich sende:"+message); //Johannes DEBUG
+        //TODO jason object erstellen bzw wo die funktion benutz wird durch die methoden die json object erstellen ersetzen (auser in den methoden)
 			pWriterOutputStream.println(message);
 			pWriterOutputStream.flush();
-		} catch (IOException e) { server.log("Fehler beim Senden der Nachricht des Clients."); }
 	}
 	
 	void sendToRoom (String message) {
@@ -73,9 +71,9 @@ class ClientThread extends Thread {
 		}
 	}
 
-	String accept(BufferedReader inputStream) {
+	String accept() {
 		try { 
-			String input = inputStream.readLine();
+			String input = this.input.readLine();
 			server.log(input);
 			return input;
 		} catch (IOException e) {
@@ -91,7 +89,7 @@ class ClientThread extends Thread {
 	}
 
 
-	public void kick() {
+	void kick() {
 	    try {
 
             server.removeNutzer(this);
@@ -106,14 +104,41 @@ class ClientThread extends Thread {
         }
     }
 
-	public void run(){
+    private void login() {
+       // while(true)
+        {
+            send("Name: "); // null sendet an den Client
+            String name = accept();
+            this.name = name;
+            server.log(name+ " ist jetzt da");//Johannes DEBUG
+            send("Passwort: ");
+            String passwort = accept();
+            server.log("passwort: "+ passwort);//Johannes DEBUG
+/*
+            if (!hmap.containsKey(name)) {          //TODO umbennenen
+                hmap.put(name, passwort);
+                send("Du hast einen neuen Account erstellt.");
+                System.out.println("Neuer Account registriert: " + name);
+            }
+            if (hmap.get(name).equals(passwort)) {// TODO oder die checkPassword benutzen
+                send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+                break;
+            } else {
+                send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+            }
+            */
+        }
+    }
+    public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			server.log("ClientThread läuft");
+            //TODO in den Construktor verschieben
+            DataOutputStream output = new DataOutputStream(client.getOutputStream());
+            pWriterOutputStream = new PrintWriter(output, true);
 			InputStream inputStream = client.getInputStream();
 			OutputStream outputStream = client.getOutputStream();
-			BufferedReader input= new BufferedReader(new InputStreamReader(inputStream));
-			String name = "", passwort = "";
+			input= new BufferedReader(new InputStreamReader(inputStream));
 
 			/*
 			raum = (Raum) server.getNutzerListeHashMap().get("Lobby");
@@ -123,10 +148,18 @@ class ClientThread extends Thread {
 
 			 */
 			//erwarte korrekte userdaten
-			while(true) {
+
+            login();
+            /*TODO wenn du deinen alten eigenen code benutzen möchtest:
+            *anstatt der while schleife die Methode login() verwenden
+            * (habe es nur aus dem alten code in eine eigene methode kopiert)
+            * */
+/*
+
+            while(true) {
 
 				//erwarte login request
-				String startupMessage = accept(input);
+				String startupMessage = accept();
 
 				try {
 					JSONObject credentials = new JSONObject(startupMessage);
@@ -196,13 +229,15 @@ class ClientThread extends Thread {
 
 				}
 			}
+*/
 
 
 
             raum = server.getRaum("Lobby");
             raum.addUser(name);
+            server.insertNutzer(name, this);//Johannes
 
-
+//TODO eigene methoden
 
             ////////////////////////////////////
             //Sende nutzerliste zum nutzer
@@ -239,11 +274,11 @@ class ClientThread extends Thread {
             send(raeume.toString());
             ////////////////////////////////////
 
-
+//TODO name vorher setzen
 			sendToRoom(name + " hat sich eingeloggt.");
 
 			while(valid) {
-				String in = accept(input);
+				String in = accept();
 
 				JSONObject message = null;
 				String type = "";

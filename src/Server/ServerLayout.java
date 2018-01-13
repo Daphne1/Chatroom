@@ -39,7 +39,7 @@ public class ServerLayout {
                 switch ((String) chooseAction.getSelectedItem()) {
 
                     case "Raum umbenennen":
-                        response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");
+                        response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");//TODO zum testen die einzelen sachen in einzele zeilen schreiebn
                         server.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
                         updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
@@ -127,7 +127,7 @@ public class ServerLayout {
     }
 
     public void setName(String s) {
-        name.setText(s);
+        //name.setText(s);      //TODO das label scheint nicht zu existieren
     }
 
     public void setServerlogInfo(String serverName) {

@@ -49,7 +49,7 @@ class empfangenThread extends Thread {
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
-
+				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht); //Johannes es ist beim der clientThread senden merhode nicht automatische eine json message
 				//System.out.println(ankommendeNachricht);
 
 				//switch types
@@ -98,11 +98,14 @@ class empfangenThread extends Thread {
 						}
 
 					}
-
+					else {//Johannes DBUG falls ein normaler String kommt
+						client.appendMessage(ankommendeNachricht);
+					}
 				}
 
 			} else {
 				//connection broke
+				client.appendMessage("verbindung verloren! beende das Programm");
 				System.exit(0);
 			}
 		}

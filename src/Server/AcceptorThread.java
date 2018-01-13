@@ -7,6 +7,11 @@ import java.net.Socket;
 
 class AcceptorThread extends Thread {
 
+
+	/*
+	* startet neue ClientThreads
+	* */
+
 	private Server server;
 	private ServerSocket socket;
 

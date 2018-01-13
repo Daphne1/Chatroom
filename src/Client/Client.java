@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class Client {
 
 	private JPanel mainPanel;
-	private JTextField inputField;
+	JTextField inputField;
 	private JLabel RoomLabel;
 	private JButton sendButton;
 	private JTabbedPane tabbedPane1;
@@ -66,7 +66,8 @@ public class Client {
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-
+/*
+                //anfang senfo login
 				if (!enteredUser) {
 					user = inputField.getText();
 					enteredUser = true;
@@ -83,47 +84,68 @@ public class Client {
 
 				} else if (loginConfirmed) {
 
-				    String message = inputField.getText();
+                    String message = inputField.getText();
                     appendMessage(message);
 
                     JSONObject request = new JSONObject();
 
-				    if (message.startsWith("/")) {
+                    if (message.startsWith("/")) {
 
-				        //command
+                        //command
                         if (message.startsWith("/abmelden")) {
 
                             request
-                                    .put("type","logout")
-                                    .put("message","");
+                                    .put("type", "logout")
+                                    .put("message", "");
 
                         } else if (message.startsWith("/changeroom")) {
                             int indexfirstspace = message.indexOf(' ');
                             String param = message.substring(indexfirstspace + 1);
 
                             request
-                                    .put("type","changeroom")
-                                    .put("message",param);
+                                    .put("type", "changeroom")
+                                    .put("message", param);
 
                         }
 
                     } else {
 
-				        //normal message
-				        request
-                            .put("type", "message")
-                            .put("message", message);
+                        //normal message
+                        request
+                                .put("type", "message")
+                                .put("message", message);
                     }
                     senden(request.toString());
-
+                    inputField.setText("");
                 }
+                //ende senfo login
+                */
+            eingabe();
 
-				inputField.setText("");
-			}
+
+            }
 		});
+        inputField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                eingabe();
+            }
+        });
 	}
 
-	private void GUI_start() {
+    private void eingabe() {
+        String message = inputField.getText();
+        appendMessage(message);
+        JSONObject request = new JSONObject();
+        request
+                .put("type", "message")
+                .put("message", message);
+
+        senden(request.toString());
+        inputField.setText("");
+    }
+
+    private void GUI_start() {
         JFrame clientFrame = new JFrame("Client Fenster");
         clientFrame.setContentPane(mainPanel);
         clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -143,11 +165,11 @@ public class Client {
 	    appendMessage(error);
     }
 
-    public boolean isLoginConfirmed() {
+    boolean isLoginConfirmed() {
 	    return loginConfirmed;
     }
 
-    public void addRooms (JSONArray array) {
+    void addRooms(JSONArray array) {
 
         if (array != null) {
 
@@ -160,7 +182,7 @@ public class Client {
 
     }
 
-    public void addUsers (JSONArray array) {
+    void addUsers(JSONArray array) {
 
         if (array != null) {
 
@@ -234,6 +256,5 @@ public class Client {
         }
         userlist.setModel(listUser);
         roomlist.setModel(listRooms);
-    }
     }
 }

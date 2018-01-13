@@ -7,6 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ServerInput extends Thread {
+
+	/*
+	*
+	* liest von der Tastatur ein
+	* und falls man in in die nich verwendete Konssole "/stop" schreibt beendet es den Server
+	* */
+
 	private Server server;
 	
 	public ServerInput(Server server){

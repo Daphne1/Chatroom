@@ -19,66 +19,67 @@ import javax.swing.*;
 public class Server {
 
 	private static final int PORT = 3456;
-    private static Server INSTANCE = new Server();
-    public static synchronized Server getInstance() {
-        return INSTANCE;
-    }
-    String serverName = "PseudoSportProgram";
+	private static Server INSTANCE = new Server();
 
-    private ServerSocket socket;
+	public static synchronized Server getInstance() {
+		return INSTANCE;
+	}
 
-    //username - clientthread
+	String serverName = "PseudoSportProgram";
+
+	private ServerSocket socket;
+
+	//username - clientthread
 	private HashMap<String, ClientThread> nutzerListe;
 
 	//roomname - room
 	private HashMap<String, Raum> raumListe;
 
 
-    private ServerLayout GUI;
+	private ServerLayout GUI;
 
-//  User - Password
-    private HashMap<String, Map.Entry<String,Boolean>> passwords;
+	//  User - Password
+	private HashMap<String, Map.Entry<String, Boolean>> passwords;
 
 
 	private Server() {
 
 
-	    //init lookups
-        this.raumListe = new HashMap<>();
-	    this.nutzerListe = new HashMap<>();
-	    this.passwords = new HashMap<>();
+		//init lookups
+		this.raumListe = new HashMap<>();
+		this.nutzerListe = new HashMap<>();
+		this.passwords = new HashMap<>();
 
-	    //read passwords
-	    loadUserData();
+		//read passwords
+		loadUserData();
 
-	    try {
+		try {
 			GUI = new ServerLayout(this);
 			GUI.start_gui();
 			GUI.setServerlogInfo(serverName);
-            log("Server ist gestartet!");
-            this.socket = new ServerSocket(PORT);
-            log("Server hat gestartet \nZum Beenden '/stop' eingeben.");
+			log("Server ist gestartet!");
+			this.socket = new ServerSocket(PORT);
+			log("Server hat gestartet \nZum Beenden '/stop' eingeben.");
 
-            // newRoom("Lobby");
-            Raum lobby = new Raum("Lobby");
-            raumListe.put(lobby.getName(), lobby);
+			// newRoom("Lobby");
+			Raum lobby = new Raum("Lobby");
+			raumListe.put(lobby.getName(), lobby);
 
-            Raum lobby2 = new Raum("Lobby2");
-            raumListe.put(lobby2.getName(), lobby2);
+			Raum lobby2 = new Raum("Lobby2");
+			raumListe.put(lobby2.getName(), lobby2);
 
-            // Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
-            log("Vorhandene Räume: " + raumListe.size());
+			// Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
+			log("Vorhandene Räume: " + raumListe.size());
 
-            AcceptorThread acceptor = new AcceptorThread(this, socket);
-            acceptor.start();
+			AcceptorThread acceptor = new AcceptorThread(this, socket);
+			acceptor.start();
 
 
+		} catch (IOException e) {
 
-        } catch ( IOException e ) {
+			log("Could not bind Socket!");
 
-            log("Could not bind Socket!");
-
-        }
+		}
 	}
 
 	/*
@@ -89,63 +90,63 @@ public class Server {
 
 	//passwords need a lock
 	public boolean checkUserPassword(String user, String password) {
-	    if (passwords.containsKey(user)) {
-	        //password match
-	        return passwords.get(user).getKey().equals(password);
-        } else {
-	        return false;
-        }
-    }
+		if (passwords.containsKey(user)) {
+			//password match
+			return passwords.get(user).getKey().equals(password);
+		} else {
+			return false;
+		}
+	}
 
-    public boolean isBanned(String user) {
-	    return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
-    }
+	public boolean isBanned(String user) {
+		return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
+	}
 
-    public boolean userExists(String user) {
-	    return passwords.containsKey(user);
-    }
+	public boolean userExists(String user) {
+		return passwords.containsKey(user);
+	}
 
-    public void createUser(String user, String password) {
-	    passwords.put(user,new AbstractMap.SimpleEntry<String, Boolean>(password,false));
+	public void createUser(String user, String password) {
+		passwords.put(user, new AbstractMap.SimpleEntry<String, Boolean>(password, false));
 
-	    //save passwords
-	    saveUserData();
-    }
+		//save passwords
+		saveUserData();
+	}
 
-    //raumliste needs a lock
+	//raumliste needs a lock
 	public Set<String> getRaumListe() {
 		return raumListe.keySet();
 	}
 
-    protected HashMap getRaumListeHashMap() {
-        return nutzerListe;
-    }
+	protected HashMap getRaumListeHashMap() {
+		return nutzerListe;
+	}
 
-	public Raum getRaum (String name) {
-	    return raumListe.containsKey(name) ? raumListe.get(name) : null;
-    }
+	public Raum getRaum(String name) {
+		return raumListe.containsKey(name) ? raumListe.get(name) : null;
+	}
 
 	//nutzerliste needs a lock
-    public Set<String> getNutzerListe() {
-        return nutzerListe.keySet();
-    }
+	public Set<String> getNutzerListe() {
+		return nutzerListe.keySet();
+	}
 
-    protected HashMap getNutzerListeHashMap() {
+	protected HashMap getNutzerListeHashMap() {
 		return nutzerListe;
 	}
 
 	public void insertNutzer(String name, ClientThread thread) {
-	    nutzerListe.put(name, thread);
-	    updateAllLists(nutzerListe, raumListe);
-	    GUI.setName("Lobby");
-    }
+		nutzerListe.put(name, thread);
+		updateAllLists(nutzerListe, raumListe);
+		GUI.setName("Lobby");
+	}
 
-    public void removeNutzer(ClientThread name) {
+	public void removeNutzer(ClientThread name) {
 		nutzerListe.remove(name);
 		updateAllLists(nutzerListe, raumListe);
 	}
 
-    private void saveUserData() {
+	private void saveUserData() {
 
 		FileOutputStream out = null;
 
@@ -158,27 +159,27 @@ public class Server {
 			JSONObject allData = new JSONObject();
 			JSONArray allUsers = new JSONArray();
 
-			for (Map.Entry<String,Map.Entry<String,Boolean>> _x : passwords.entrySet()) {
+			for (Map.Entry<String, Map.Entry<String, Boolean>> _x : passwords.entrySet()) {
 
 				JSONObject user = new JSONObject()
 						.put(
 								"user",
 								_x.getKey()
 						)
-                        .put(
-                                "password",
-                                _x.getValue().getKey()
-                        )
-                        .put(
-                                "banned",
-                                _x.getValue().getValue()
-                        );
+						.put(
+								"password",
+								_x.getValue().getKey()
+						)
+						.put(
+								"banned",
+								_x.getValue().getValue()
+						);
 
 				allUsers.put(user);
 
 			}
 
-			allData.put("users",allUsers);
+			allData.put("users", allUsers);
 			stream.write(allData.toString().getBytes());
 
 		} catch (FileNotFoundException e) {
