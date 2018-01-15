@@ -29,7 +29,7 @@ public class ServerLayout {
 
     private static ServerLayout INSTANCE;
 
-    ServerLayout(Server server) {
+    ServerLayout(Server2 server2) {
 
         button1.addActionListener(new ActionListener() {
             @Override
@@ -40,40 +40,37 @@ public class ServerLayout {
 
                     case "Raum umbenennen":
                         response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");//TODO zum testen die einzelen sachen in einzele zeilen schreiebn
-                        server.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
-                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
+                        server2.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
+                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Raum löschen":
                         response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
-                        server.deleteRoom((Raum) roomList.getSelectedValue());
-                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
+                        server2.deleteRoom((Raum) roomList.getSelectedValue());
+                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Raum erstellen":
-                        server.newRoom(textField1.getText());
+                        server2.newRoom(textField1.getText());
                         response.setText("Raum " + textField1.getText() + "wurde erstellt.");
-                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
+                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Benutzer verwarnen":
-                        server.warnUser((ClientThread) userList.getSelectedValue());
+                        server2.warnUser((ClientThread) userList.getSelectedValue());
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
                         break;
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        server.kickUser(userList.getSelectedValue().toString());
-                        System.out.println(userList.getSelectedValue());
-                        // server.kickUser(userList.getSelectedValue().getUserName());
-                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
+                        server2.kickUser((ClientThread) userList.getSelectedValue());
+                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Benutzer ausschließen":
-                        response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server ausgeschlossen.");
-                        // server.banUser(userList.getSelectedValue().getUserName());
-                        updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
+                        response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
+                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
 //                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
-                    case "Server umbennen":
-                        server.editServername(textField1.getText());
-                        response.setText("Der Server " + server.serverName + " wurde in " + textField1.getText() + "umbenannt.");
-                        serverlogInfo.setText("Server '" + textField1.getText() + "' ist online.");
+                    case "Server2 umbennen":
+                        server2.editServername(textField1.getText());
+                        response.setText("Der Server2 " + server2.serverName + " wurde in " + textField1.getText() + "umbenannt.");
+                        serverlogInfo.setText("Server2 '" + textField1.getText() + "' ist online.");
                         break;
                     case "Passwortdatei lesen":
 //                        TODO s.readPasswordDatei();
@@ -89,20 +86,20 @@ public class ServerLayout {
         frame.setContentPane(this.ROOT);
 /*
         bar = new JMenuBar();
-        Server = new JMenu("Server");
+        Server2 = new JMenu("Server2");
         Benutzer = new JMenu("Benutzer");
-        Raum = new JMenu("Server.Raum");
+        Raum = new JMenu("Server2.Raum");
         Operationen = new JMenu("Operationen");
 
-        fileNew = new JMenuItem("Server umbenennen");
+        fileNew = new JMenuItem("Server2 umbenennen");
 
         //frame.add(bar, new BorderLayout().PAGE_START);
-        bar.add(Server);
+        bar.add(Server2);
         bar.add(Benutzer);
         bar.add(Raum);
         bar.add(Operationen);
 
-        Server.Server.add(fileNew);
+        Server2.Server2.add(fileNew);
 */
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,6 +131,6 @@ public class ServerLayout {
     }
 
     public void setServerlogInfo(String serverName) {
-        serverlogInfo.setText("Server '" + serverName + "' ist online.");
+        serverlogInfo.setText("Server2 '" + serverName + "' ist online.");
     }
 }

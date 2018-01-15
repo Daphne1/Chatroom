@@ -24,7 +24,7 @@ class empfangenThread extends Thread {
 		this.client = client;
 	}
 
-	// Nachrichten koennen vom Server.Server entgegengenommen werden
+	// Nachrichten koennen vom Server2.Server2 entgegengenommen werden
 	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
 	private String annehmen() {
 		try {
@@ -37,15 +37,15 @@ class empfangenThread extends Thread {
 			return null;
 
 		} catch (IOException e) {
-			System.out.println("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
+			System.out.println("Eine Nachricht konnte vom Server2.Server2 nicht angenommen werden.");
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	public void run(){
-		// empfängt die Nachrichten vom Server.Server über die Methode annehmen()
-		// gibt diese aus, solange der Server.Server läuft
+		// empfängt die Nachrichten vom Server2.Server2 über die Methode annehmen()
+		// gibt diese aus, solange der Server2.Server2 läuft
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {

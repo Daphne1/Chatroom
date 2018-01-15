@@ -1,9 +1,7 @@
 package Server;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 class AcceptorThread extends Thread {
 
@@ -12,12 +10,12 @@ class AcceptorThread extends Thread {
 	* startet neue ClientThreads
 	* */
 
-	private Server server;
+	private Server2 server2;
 	private ServerSocket socket;
 
-	AcceptorThread(Server server, ServerSocket socket) {
+	AcceptorThread(Server2 server2, ServerSocket socket) {
 
-		this.server = server;
+		this.server2 = server2;
 		this.socket = socket;
 
 	}
@@ -25,14 +23,14 @@ class AcceptorThread extends Thread {
 
 	public void run(){
 
-		ServerInput eingabe = new ServerInput(server);
+		ServerInput eingabe = new ServerInput(server2);
 		eingabe.start();
 
 		//Client.Client acceptor
 		while (true) {
 
 			try {
-				ClientThread clientThread = new ClientThread(server, socket.accept());
+				ClientThread clientThread = new ClientThread(server2, socket.accept());
 				clientThread.start();
 			} catch ( IOException e ) {
 				System.out.println("Failed to accept connection of a client.");
