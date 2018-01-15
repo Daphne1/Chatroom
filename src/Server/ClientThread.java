@@ -8,7 +8,7 @@ import java.net.Socket;
 class ClientThread extends Thread { 
 
 	private Socket client;
-	private Server server;
+	private Server2 server2;
 		
 	private String name;
 	boolean valid = true;
@@ -25,13 +25,13 @@ class ClientThread extends Thread {
 	private BufferedReader input;
     PrintWriter pWriterOutputStream;
 
-    ClientThread(Server server, Socket client) {
+    ClientThread(Server2 server2, Socket client) {
 		this.client = client;
-		this.server = server;
+		this.server2 = server2;
 	}
 
     protected void switchRoom (Raum neuerRaum) {
-        server.log(name + " wechselt vom Raum " + raum + " zu " + neuerRaum);
+        server2.log(name + " wechselt vom Raum " + raum + " zu " + neuerRaum);
         sendToRoom(name + " hat zum Raum '" + neuerRaum.getName() + "' gewechselt.");
         raum.removeUser(name);
         raum = neuerRaum;
@@ -45,7 +45,7 @@ class ClientThread extends Thread {
 
 
 	public boolean checkPassword (String passwort) {
-		return server.checkUserPassword(name,passwort);
+		return server2.checkUserPassword(name,passwort);
 	}
 
 	void send(String message) {
@@ -66,7 +66,7 @@ class ClientThread extends Thread {
 
 	    for (String _x : raum.getNutzerList()) {
 
-	        server.sendToUser(_x, toSend);
+	        server2.sendToUser(_x, toSend);
 
 		}
 	}
@@ -74,10 +74,10 @@ class ClientThread extends Thread {
 	String accept() {
 		try { 
 			String input = this.input.readLine();
-			server.log(input);
+			server2.log(input);
 			return input;
 		} catch (IOException e) {
-			server.log("Ankommende Nachrichten werden nicht akzeptiert.");
+			server2.log("Ankommende Nachrichten werden nicht akzeptiert.");
 			e.printStackTrace();
 			return null;
 		}
@@ -92,7 +92,7 @@ class ClientThread extends Thread {
 	void kick() {
 	    try {
 
-            server.removeNutzer(this);
+            server2.removeNutzer(this);
             raum.removeUser(name);
             valid = false;
 
@@ -110,10 +110,10 @@ class ClientThread extends Thread {
             send("Name: "); // null sendet an den Client
             String name = accept();
             this.name = name;
-            server.log(name+ " ist jetzt da");//Johannes DEBUG
+            server2.log(name+ " ist jetzt da");//Johannes DEBUG
             send("Passwort: ");
             String passwort = accept();
-            server.log("passwort: "+ passwort);//Johannes DEBUG
+            server2.log("passwort: "+ passwort);//Johannes DEBUG
 /*
             if (!hmap.containsKey(name)) {          //TODO umbennenen
                 hmap.put(name, passwort);
@@ -132,7 +132,7 @@ class ClientThread extends Thread {
     public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
-			server.log("ClientThread läuft");
+			server2.log("ClientThread läuft");
             //TODO in den Construktor verschieben
             DataOutputStream output = new DataOutputStream(client.getOutputStream());
             pWriterOutputStream = new PrintWriter(output, true);
@@ -141,7 +141,7 @@ class ClientThread extends Thread {
 			input= new BufferedReader(new InputStreamReader(inputStream));
 
 			/*
-			raum = (Raum) server.getNutzerListeHashMap().get("Lobby");
+			raum = (Raum) server2.getNutzerListeHashMap().get("Lobby");
 			switchRoom(raum);
 
 			String startupMessage = accept(input);
@@ -171,11 +171,11 @@ class ClientThread extends Thread {
 					//couldnt read / malformed syntax
 				}
 
-				if (server.userExists(name)) {
-					if (server.checkUserPassword(name, passwort)) {
+				if (server2.userExists(name)) {
+					if (server2.checkUserPassword(name, passwort)) {
 
-					    if (!server.isBanned( name )) {
-                            server.insertNutzer(name, this);
+					    if (!server2.isBanned( name )) {
+                            server2.insertNutzer(name, this);
 
                             JSONObject answer = new JSONObject()
                                     .put("type", "login")
@@ -211,9 +211,9 @@ class ClientThread extends Thread {
 					}
 				} else {
 
-				    server.createUser(name,passwort);
-				    // raum = server.getRaum("Lobby");
-					// server.log("Neuer Account erstellt: \t" + name);
+				    server2.createUser(name,passwort);
+				    // raum = server2.getRaum("Lobby");
+					// server2.log("Neuer Account erstellt: \t" + name);
 
 					System.out.println("Neuer Account erstellt: \t" + name);
 
@@ -233,9 +233,9 @@ class ClientThread extends Thread {
 
 
 
-            raum = server.getRaum("Lobby");
+            raum = server2.getRaum("Lobby");
             raum.addUser(name);
-            server.insertNutzer(name, this);//Johannes
+            server2.insertNutzer(name, this);//Johannes
 
 //TODO eigene methoden
 
@@ -262,7 +262,7 @@ class ClientThread extends Thread {
 			//sende Raumlist zum User
             //-> Funktion
             JSONArray raumListe = new JSONArray();
-            for (String _x : server.getRaumListe()) {
+            for (String _x : server2.getRaumListe()) {
                 raumListe.put(_x);
             }
 
@@ -312,7 +312,7 @@ class ClientThread extends Thread {
 					    String raumName = message.optString("message", "");
 
 					    if (!raumName.equals("")) {
-                            Raum neuerRaum = server.getRaum(raumName);
+                            Raum neuerRaum = server2.getRaum(raumName);
 
                             if (neuerRaum != null) {
                                 send(
@@ -344,9 +344,9 @@ class ClientThread extends Thread {
                         if ( client != null ) {
                             try {
                                 raum.removeUser(name);
-                                server.removeNutzer(this);
+                                server2.removeNutzer(this);
                                 client.close();
-                                //Server.getRaumListe().remove(name); wtf's this supposed to do?!
+                                //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
                             } catch (IOException e) {
 
                             }
@@ -366,10 +366,10 @@ class ClientThread extends Thread {
 
 			if ( client != null ) {
                 try {
-                    server.removeNutzer(this);
+                    server2.removeNutzer(this);
                     raum.removeUser(name);
                     client.close();
-                    //Server.getRaumListe().remove(name); wtf's this supposed to do?!
+                    //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
                 } catch (IOException e) {
 
                 }

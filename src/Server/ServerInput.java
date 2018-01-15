@@ -1,7 +1,5 @@
 package Server;
 
-import Server.Server;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,13 +9,13 @@ public class ServerInput extends Thread {
 	/*
 	*
 	* liest von der Tastatur ein
-	* und falls man in in die nich verwendete Konssole "/stop" schreibt beendet es den Server
+	* und falls man in in die nich verwendete Konssole "/stop" schreibt beendet es den Server2
 	* */
 
-	private Server server;
+	private Server2 server2;
 	
-	public ServerInput(Server server){
-		this.server = server;
+	public ServerInput(Server2 server2){
+		this.server2 = server2;
 	}
 	public void run() {
 		try {

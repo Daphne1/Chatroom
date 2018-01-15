@@ -204,13 +204,13 @@ public class Client {
 	}
 
 	/*
-	// Nachrichten koennen vom Server.Server entgegengenommen werden
+	// Nachrichten koennen vom Server2.Server2 entgegengenommen werden
 	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
 	static String annehmen(BufferedReader bufferedReaderInputStream) {
 		try {
 			return bufferedReaderInputStream.readLine(); 
 		} catch (IOException e) {
-			appendMessage("Eine Nachricht konnte vom Server.Server nicht angenommen werden.");
+			appendMessage("Eine Nachricht konnte vom Server2.Server2 nicht angenommen werden.");
 			e.printStackTrace();
 			return null;
 		}
