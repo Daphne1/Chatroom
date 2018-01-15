@@ -62,7 +62,7 @@ class ClientThread extends Thread {
                 .put("message", message)
                 .put("status", "ok");
 
-	    String toSend = nachricht.toString();
+	    String toSend = nachricht.getString("message");
 
 	    for (String _x : raum.getNutzerList()) {
 
@@ -85,9 +85,13 @@ class ClientThread extends Thread {
 
 	@Override
 	public String toString() {
-		return "[" + raum.getName() + "] /t" + name;
+		return "[" + raum.getName() + "] " + name;
 	}
 
+
+	public String getUserName() {
+		return name;
+	}
 
 	void kick() {
 	    try {
@@ -105,28 +109,49 @@ class ClientThread extends Thread {
     }
 
     private void login() {
-       // while(true)
+       	while(true)
         {
-            send("Name: "); // null sendet an den Client
-            String name = accept();
-            this.name = name;
+			JSONObject request = new JSONObject();
+			request
+					.put("type", "message")
+					.put("message", "Name: ");
+
+			send(request.toString());
+
+//            send("Name: "); // null sendet an den Client
+            String nachricht = accept();
+
+			JSONObject json = new JSONObject(nachricht);
+//			String type = json.optString("type","");
+			String name = json.optString("message", "");
+
+			this.name = name;
             server.log(name+ " ist jetzt da");//Johannes DEBUG
-            send("Passwort: ");
-            String passwort = accept();
+
+			request.put("message", "Passwort: ");
+			send(request.toString());
+
+            // send("Passwort: ");
+			nachricht = accept();
+
+			json = new JSONObject(nachricht);
+//			String type = json.optString("type","");
+			String passwort = json.optString("message", "");
+
+//            String passwort = accept();
             server.log("passwort: "+ passwort);//Johannes DEBUG
-/*
-            if (!hmap.containsKey(name)) {          //TODO umbennenen
-                hmap.put(name, passwort);
+
+            if (!server.checkUserPassword(name, passwort)) {          //TODO umbennenen
+                server.createUser(name, passwort);
                 send("Du hast einen neuen Account erstellt.");
                 System.out.println("Neuer Account registriert: " + name);
             }
-            if (hmap.get(name).equals(passwort)) {// TODO oder die checkPassword benutzen
+            if (checkPassword(passwort)) {// TODO oder die checkPassword benutzen
                 send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
                 break;
             } else {
                 send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
             }
-            */
         }
     }
     public void run(){

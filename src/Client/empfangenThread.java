@@ -50,6 +50,7 @@ class empfangenThread extends Thread {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
 				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht); //Johannes es ist beim der clientThread senden merhode nicht automatische eine json message
+
 				//System.out.println(ankommendeNachricht);
 
 				//switch types
@@ -69,7 +70,8 @@ class empfangenThread extends Thread {
 					//TODO switch case
 					if (type.equals("message")) {
 
-						if (client.isLoginConfirmed()) {
+//						if (client.isLoginConfirmed()) {
+						if (true) {
 							String nachricht = json.optString("message", "");
 
 							if (!nachricht.equals(""))

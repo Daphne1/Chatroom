@@ -348,13 +348,4 @@ public class Server {
 	void warnUser(ClientThread ct) {
 		ct.send("Bitte keine Dummheiten mehr.");
 	}
-	void kickUser(ClientThread ct) {
-		ct.send("Das wars.");
-		ct.send(null);
-	}
-	/*void bannUser(ClientThread ct) {
-		ct.send(null);
-		passwords.get(ct.getName()) = "äölkjhgfddssasaszuiejhj";
-	}*/
-
 }

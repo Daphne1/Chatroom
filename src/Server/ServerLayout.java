@@ -59,11 +59,14 @@ public class ServerLayout {
                         break;
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        server.kickUser((ClientThread) userList.getSelectedValue());
+                        server.kickUser(userList.getSelectedValue().toString());
+                        System.out.println(userList.getSelectedValue());
+                        // server.kickUser(userList.getSelectedValue().getUserName());
                         updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server ausgeschlossen.");
+                        // server.banUser(userList.getSelectedValue().getUserName());
                         updateLists(server.getNutzerListeHashMap(), server.getRaumListeHashMap());
 //                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
