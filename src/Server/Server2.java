@@ -1,16 +1,19 @@
 package Server;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import javax.swing.*;
 
 //SINGLETON
 public class Server2 {
@@ -54,19 +57,13 @@ public class Server2 {
 			GUI = new ServerLayout(this);
 			GUI.start_gui();
 			GUI.setServerlogInfo(serverName);
-			log("Server2 ist gestartet!");
 			this.socket = new ServerSocket(PORT);
-			log("Server2 hat gestartet \nZum Beenden '/stop' eingeben.");
+			log("Server hat gestartet.");
 
-			// newRoom("Lobby");
-			Raum lobby = new Raum("Lobby");
-			raumListe.put(lobby.getName(), lobby);
+			newRoom("Lobby");
+			newRoom("Füllerfeder");
 
-			Raum lobby2 = new Raum("Lobby2");
-			raumListe.put(lobby2.getName(), lobby2);
-
-			// Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
-			log("Vorhandene Räume: " + raumListe.size());
+			updateAllLists();
 
 			AcceptorThread acceptor = new AcceptorThread(this, socket);
 			acceptor.start();
@@ -79,11 +76,10 @@ public class Server2 {
 		}
 	}
 
-	/*
-	public static HashMap<String, String> getPasswords() {
+
+	public HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
 		return passwords;
 	}
-	*/
 
 	//passwords need a lock
 	public boolean checkUserPassword(String user, String password) {
@@ -134,18 +130,18 @@ public class Server2 {
 
 	public void insertNutzer(String name, ClientThread thread) {
 		nutzerListe.put(name, thread);
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 		GUI.setName("Lobby");
 	}
 
 	public void removeNutzer(ClientThread name) {
 		nutzerListe.remove(name);
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 	}
 
 	private void saveUserData() {
 
-		FileOutputStream out = null;
+//		FileOutputStream out = null;
 
 		try {
 
@@ -173,29 +169,37 @@ public class Server2 {
 						);
 
 				allUsers.put(user);
+				allUsers.put("\n");
 
 			}
 
 			allData.put("users", allUsers);
 			stream.write(allData.toString().getBytes());
 
+			updateAllLists();
+
 		} catch (FileNotFoundException e) {
-			//couldnt create file
+			System.out.println("Couldn't create file.");
 		} catch (IOException e) {
-			//couldnt open/create file
+			System.out.println("Couldn't open/create file.");
 		}
 	}
 
 	private void loadUserData() {
 
+		System.out.println("1");
+
 		File users = new File("users.txt");
 		if (users.isFile() && users.canRead()) {
+			System.out.println("2");
 			try {
+//				System.out.println("3");
 				FileInputStream in = new FileInputStream(users);
 				try {
 					String content = "";
 					int c;
 					while ((c = in.read()) != -1) {
+						System.out.println("3");
 						content += (char)c;
 					}
 
@@ -203,29 +207,38 @@ public class Server2 {
 						JSONObject json = new JSONObject(content);
 
 						JSONArray usersarray = json.optJSONArray("users");
+						System.out.println("Array: " + usersarray);
 
 						if (usersarray != null) {
+							System.out.println("4");
 
 							for (int i = 0; i < usersarray.length(); i++) {
-								JSONObject user = usersarray.optJSONObject(i);
+								System.out.println("5");
+								JSONArray user = usersarray.optJSONArray(i);
+								System.out.println("User: " + user);
 
 								if (user != null) {
-									String username = user.optString("user", "");
-									String password = user.optString("password","");
-                                    Boolean banned = user.optBoolean("banned",false);
+									System.out.println("6");
+
+									String username = user.optString(2, "");
+									String password = user.optString(0,"");
+                                    Boolean banned = user.optBoolean(1,false);
 
 									if (!username.equals("") && !password.equals("")) {
+										System.out.println("7");
 										passwords.put(
 										        username,
                                                 new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
                                         );
 									}
 
+//									System.out.println("Daten: " + username + "\t" + password + "\t" + banned);
+
 								}
 							}
 
 						} else {
-							//array didnt exist
+							System.out.println("Array didn't exist.");
 						}
 
 					} catch (JSONException e) {
@@ -236,7 +249,7 @@ public class Server2 {
 					in.close();
 				}
 			} catch (IOException ex) {
-				//couldnt open file
+				System.out.println("Couldn't open file.");
 			}
 		}
 	}
@@ -283,39 +296,28 @@ public class Server2 {
 	protected void newRoom (String name) {
 		// TODO ein bestehender Name darf nicht gewählt werden
 		raumListe.put(name, new Raum(name));
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 	}
 
 	protected void editRoom (Raum room, String newName) {
 		// TODO ein bestehender Name darf nicht gewählt werden
 		// TODO Lobby darf nicht umbenannt werden
 		room.setName(newName);
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 	}
 
 	protected void deleteRoom (Raum room) {
 		// TODO Lobby permanent
 		raumListe.remove(room);
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 	}
 
-	private void updateAllLists (HashMap nutzerListe, HashMap raumListe) {
+	protected void updateAllLists () {
 		GUI.updateLists(nutzerListe, raumListe);
 
-		ArrayList<String> nutzerlistTemp = iterateHashmap(nutzerListe);
-		String[] nutzerliste = new String[nutzerlistTemp.size()];
-		for (int i=0; i < nutzerListe.size(); i++) {
-			nutzerliste[i] = nutzerlistTemp.get(i);
+		for (String s : nutzerListe.keySet()) {
+			nutzerListe.get(s).updateLists();
 		}
-
-		ArrayList<String> roomlistTemp = iterateHashmap(raumListe);
-		String[] roomliste = new String[roomlistTemp.size()];
-		for (int i=0; i < raumListe.size(); i++) {
-			roomliste[i] = roomlistTemp.get(i);
-		}
-
-		// TODO die userList und roomList an die Clients senden
-
 	}
 
 	private ArrayList<String> iterateHashmap (HashMap<String, Object> map) {
@@ -338,20 +340,10 @@ public class Server2 {
 		} catch (IOException e) {}
 	}
 
-	protected void refreshGUI () {
 
-	}
 
 	void warnUser(ClientThread ct) {
 		ct.send("Bitte keine Dummheiten mehr.");
 	}
-	void kickUser(ClientThread ct) {
-		ct.send("Das wars.");
-		ct.send(null);
-	}
-	/*void bannUser(ClientThread ct) {
-		ct.send(null);
-		passwords.get(ct.getName()) = "äölkjhgfddssasaszuiejhj";
-	}*/
 
 }

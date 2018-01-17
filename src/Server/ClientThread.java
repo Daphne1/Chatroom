@@ -239,40 +239,7 @@ class ClientThread extends Thread {
 
 //TODO eigene methoden
 
-            ////////////////////////////////////
-            //Sende nutzerliste zum nutzer
-            //-> Funktion
-
-			// send("\nAktuelle Nutzer:");
-			JSONArray onlineListe = new JSONArray();
-			for (String _x : raum.getNutzerList()) {
-				onlineListe.put(_x);
-			}
-
-			JSONObject nutzer = new JSONObject()
-                    .put("type","nutzer")
-                    .put("message",onlineListe)
-                    .put("status","ok");
-
-			send(nutzer.toString());
-            ////////////////////////////////////
-
-
-            ////////////////////////////////////
-			//sende Raumlist zum User
-            //-> Funktion
-            JSONArray raumListe = new JSONArray();
-            for (String _x : server2.getRaumListe()) {
-                raumListe.put(_x);
-            }
-
-            JSONObject raeume = new JSONObject()
-                    .put("type","raeume")
-                    .put("message",raumListe)
-                    .put("status","ok");
-
-            send(raeume.toString());
-            ////////////////////////////////////
+            server2.updateAllLists();
 
 //TODO name vorher setzen
 			sendToRoom(name + " hat sich eingeloggt.");
@@ -376,5 +343,42 @@ class ClientThread extends Thread {
             }
 
 		}
+	}
+
+	protected void updateLists() {
+		////////////////////////////////////
+		//Sende nutzerliste zum nutzer
+		//-> Funktion
+
+		// send("\nAktuelle Nutzer:");
+		JSONArray onlineListe = new JSONArray();
+		for (String _x : raum.getNutzerList()) {
+			onlineListe.put(_x);
+		}
+
+		JSONObject nutzer = new JSONObject()
+				.put("type","nutzer")
+				.put("message",onlineListe)
+				.put("status","ok");
+
+		send(nutzer.toString());
+		////////////////////////////////////
+
+
+		////////////////////////////////////
+		//sende Raumlist zum User
+		//-> Funktion
+		JSONArray raumListe = new JSONArray();
+		for (String _x : server2.getRaumListe()) {
+			raumListe.put(_x);
+		}
+
+		JSONObject raeume = new JSONObject()
+				.put("type","raeume")
+				.put("message",raumListe)
+				.put("status","ok");
+
+		send(raeume.toString());
+		////////////////////////////////////
 	}
 }

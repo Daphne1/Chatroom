@@ -1,5 +1,7 @@
 package Server;
 
+import Client.Client;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +29,8 @@ public class ServerLayout {
     DefaultListModel user = new DefaultListModel();
     DefaultListModel rooms = new DefaultListModel();
 
+    ClientThread userThread;
+
     private static ServerLayout INSTANCE;
 
     ServerLayout(Server2 server2) {
@@ -36,6 +40,8 @@ public class ServerLayout {
             public void actionPerformed(ActionEvent actionEvent) {
                 response.setText("");
                 System.out.println(chooseAction.getSelectedItem());
+                userThread = (ClientThread) userList.getSelectedValue();
+
                 switch ((String) chooseAction.getSelectedItem()) {
 
                     case "Raum umbenennen":
@@ -59,13 +65,11 @@ public class ServerLayout {
                         break;
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        server2.kickUser((ClientThread) userList.getSelectedValue());
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
+                        server2.kickUser(userThread.getName());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
-//                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
+                        server2.banUser(userThread.getName());
                         break;
                     case "Server2 umbennen":
                         server2.editServername(textField1.getText());
@@ -73,6 +77,7 @@ public class ServerLayout {
                         serverlogInfo.setText("Server2 '" + textField1.getText() + "' ist online.");
                         break;
                     case "Passwortdatei lesen":
+
 //                        TODO s.readPasswordDatei();
                         response.setText("Die Passwortdatei wurde ausgelesen.");
                         break;
