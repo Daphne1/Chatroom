@@ -111,6 +111,7 @@ class ClientThread extends Thread {
 	private void login() {
 		while(true)
 		{
+			server2.log("ein neuer Client möchte sich anmelden");
 			JSONObject request = new JSONObject();
 			request
 					.put("type", "message")
@@ -118,39 +119,49 @@ class ClientThread extends Thread {
 
 			send(request.toString());
 
-//            send("Name: "); // null sendet an den Client
 			String nachricht = accept();
-
 			JSONObject json = new JSONObject(nachricht);
-//			String type = json.optString("type","");
 			String name = json.optString("message", "");
-
 			this.name = name;
-			server2.log(name+ " ist jetzt da");//Johannes DEBUG
+			server2.log(name+ " versucht sich anzumelden ");
 
 			request.put("message", "Passwort: ");
 			send(request.toString());
-
-			// send("Passwort: ");
 			nachricht = accept();
 
 			json = new JSONObject(nachricht);
-//			String type = json.optString("type","");
 			String passwort = json.optString("message", "");
 
-//            String passwort = accept();
-			server2.log("passwort: "+ passwort);//Johannes DEBUG
-
-			if (!server2.checkUserPassword(name, passwort)) {          //TODO umbennenen
+			if (!server2.checkUserPassword(name, passwort)) {
 				server2.createUser(name, passwort);
-				send("Du hast einen neuen Account erstellt.");
-				System.out.println("Neuer Account registriert: " + name);
+				send("Du hast einen neuen Account erstellt.");//TODO Json
+				server2.log("Neuer Account registriert: " + name);
 			}
-			if (checkPassword(passwort)) {// TODO oder die checkPassword benutzen
-				send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+			if (checkPassword(passwort)) {
+				// prüfen ob der user schon angemeldet ist
+				if (server2.nutzerlisteContainsUser(name)){
+					server2.log(name + " versucht sich anzumelden, obwohl er schon angemeldet ist");
+					request
+							.put("type", "message")
+							.put("message", "Der Nutzer ist schon angemeldet");
+					send(request.toString());
+					login();
+				}
+
+				// prüfen ob der user gebannt ist
+				if (server2.isbanned(name)){
+					server2.log(name + " versucht sich anzumelden, obwohl er gebannt ist");
+					request
+							.put("type", "message")
+							.put("message", "Der Nutzer ist gebannt ");
+					send(request.toString());
+					login();
+				}
+				send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");//TODO Json
+				server2.log(name + " ist jetzt angemeldet");
 				break;
 			} else {
-				send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+				send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");//TODO Json
 			}
 		}
 	}
@@ -190,90 +201,95 @@ class ClientThread extends Thread {
 			sendToRoom(name + " hat sich eingeloggt.");
 
 			while(valid) {
-				String in = accept();
-
-				JSONObject message = null;
-				String type = "";
-
-				try {
-				    message = new JSONObject(in);
-                    type = message.optString("type","");
-
-                } catch (JSONException e) {
-				    //malformed data
-                }
-
-				if (message == null) {
-				    //handle malformed message
-                } else {
-
-				    //TODO switch each type
-
-					//switch each type
-					switch (type){
-						case "message":
-							String nachricht = message.optString("message","");
-							if (!nachricht.equals("")) {
-								sendToRoom(name + ":\t" + nachricht);
-							}
-							break;
-						case "switchRoom":
-							String raumName = message.optString("message", "");
-
-							if (!raumName.equals("")) {
-								Raum neuerRaum = server2.getRaum(raumName);
-
-								if (neuerRaum != null) {
-									switchRoom(neuerRaum);
-								} else {
-									send(
-											new JSONObject()
-													.put("type","message")
-													.put("message","Raum existiert nicht")
-													.put("status","ok")
-													.toString());
-								}
-
-							}
-							break;
-                        case "logout":
-                            System.out.println(name + " hat seine Verbindung abgebrochen");
-                            sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
-
-                            if ( client != null ) {
-                                try {
-                                    raum.removeUser(name);
-                                    server2.removeNutzer(this);
-                                    client.close();
-                                    //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
-                                } catch (IOException e) {
-
-                                }
-                            }
-
-                            break;
-                        default:
-                            server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
-                            break;
-
-					}
-
-				}
+				loop();
 			}
+			server2.log("schleife beendet"); //DEBUG
 		} catch ( IOException e ) {
             System.out.println("IO fuckkerino");
-        } finally {
+        }
+	}
 
-			if ( client != null ) {
-                try {
-                    server2.removeNutzer(this);
-                    raum.removeUser(name);
-                    client.close();
-                    //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
-                } catch (IOException e) {
+	private void closeClientThread(){
+		if ( client != null ) {
+			try {
+				server2.removeNutzer(this);
+				raum.removeUser(name);
+				client.close();
+				//Server2.getRaumListe().remove(name); wtf's this supposed to do?!
+			} catch (IOException e) {
 
-                }
-            }
+			}
+		}
+	}
+
+	private void loop(){
+		String in = accept();
+
+		JSONObject message = null;
+		String type = "";
+
+		try {
+			message = new JSONObject(in);
+			type = message.optString("type","");
+
+		} catch (JSONException e) {
+			//malformed data
+		}
+
+		if (message == null) {
+			//handle malformed message
+		} else {
+
+			//TODO switch each type
+
+			//switch each type
+			switch (type){
+				case "message":
+					String nachricht = message.optString("message","");
+					if (!nachricht.equals("")) {
+						sendToRoom(name + ":\t" + nachricht);
+					}
+					break;
+				case "switchRoom":
+					String raumName = message.optString("message", "");
+
+					if (!raumName.equals("")) {
+						Raum neuerRaum = server2.getRaum(raumName);
+
+						if (neuerRaum != null) {
+							switchRoom(neuerRaum);
+						} else {
+							send(
+									new JSONObject()
+											.put("type","message")
+											.put("message","Raum existiert nicht")
+											.put("status","ok")
+											.toString());
+						}
+
+					}
+					break;
+				case "logout":
+					System.out.println(name + " hat seine Verbindung abgebrochen");
+					sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
+
+					if ( client != null ) {
+						try {
+							raum.removeUser(name);
+							server2.removeNutzer(this);
+							client.close();
+							//Server2.getRaumListe().remove(name); wtf's this supposed to do?!
+						} catch (IOException e) {
+
+						}
+					}
+
+					break;
+				default:
+					server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
+					break;
+
+			}
 
 		}
 	}

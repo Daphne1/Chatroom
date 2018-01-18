@@ -134,7 +134,7 @@ public class Server2 {
 	}
 
 	public void removeNutzer(ClientThread name) {
-		nutzerListe.remove(name.getName());
+		nutzerListe.remove(name);
 		updateAllLists();
 	}
 
@@ -268,6 +268,9 @@ public class Server2 {
 	    updateAllLists();
 
     }
+    boolean isbanned(String user){
+			return passwords.get(user).getValue();
+	}
 
     public void kickUser(String user) {
 
@@ -350,6 +353,13 @@ public class Server2 {
 
 	void warnUser(ClientThread ct) {
 		ct.send("Bitte keine Dummheiten mehr.");
+	}
+
+	boolean nutzerlisteContainsUser(String name){
+		return nutzerListe.containsKey(name);
+	}
+	boolean userExist(String name){
+		return passwords.containsKey(name);
 	}
 
 	// TODO readPasswords()

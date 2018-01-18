@@ -1,1 +1,1 @@
-{"users":[{"password":"du","banned":false,"user":"Hallo"},{"password":"123","banned":false,"user":"Bob"},{"password":"bob","banned":false,"user":"bob"},{"password":"Auer","banned":false,"user":"Daphne"}]}
+{"users":[{"password":"du","banned":false,"user":"Hallo"},{"password":"123","banned":false,"user":"Bob2"},{"password":"123","banned":false,"user":"Bob"},{"password":"bob","banned":false,"user":"bob"},{"password":"123","banned":false,"user":"Daphne"},{"password":"123","banned":false,"user":"DAphne"}]}
