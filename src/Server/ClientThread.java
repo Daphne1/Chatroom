@@ -145,11 +145,12 @@ class ClientThread extends Thread {
 			request.put("message", "Passwort: ");
 			send(request.toString());
 			nachricht = accept();
-
 			json = new JSONObject(nachricht);
 			String passwort = json.optString("message", "");
 
-			if (!server2.checkUserPassword(name, passwort)) {
+
+
+			if (!server2.userExists(name)) {
 				server2.createUser(name, passwort);
 
 				request.put("message", "Du hast einen neuen Account erstellt.");
@@ -192,29 +193,25 @@ class ClientThread extends Thread {
 
     public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
-		try {
-			server2.log("ClientThread läuft");
+		server2.log("ClientThread läuft");
 
-            login();
+		login();
 
-            raum = server2.getRaum("Lobby");
-            raum.addUser(name);
-            server2.insertNutzer(name, this);
+		raum = server2.getRaum("Lobby");
+		raum.addUser(name);
+		server2.insertNutzer(name, this);
 
 //TODO eigene methoden
 
-            updateLists();
+		updateLists();
 
 //TODO name vorher setzen
-			sendToRoom(name + " hat sich eingeloggt.");
+		sendToRoom(name + " hat sich eingeloggt.");
 
-			while(valid) {
-				loop();
-			}
-			server2.log("schleife beendet"); //DEBUG
-		} catch ( IOException e ) {
-            System.out.println("IO fuckkerino");
+		while(valid) {
+            loop();
         }
+		server2.log("schleife beendet"); //DEBUG
 	}
 
 	private void closeClientThread(){
