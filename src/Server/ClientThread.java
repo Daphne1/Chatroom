@@ -77,7 +77,7 @@ class ClientThread extends Thread {
 			server2.log(input);
 			return input;
 		} catch (IOException e) {
-			server2.log("Ankommende Nachrichten werden nicht akzeptiert.");
+			server2.log("<ClientThread> accept funtioniert nicht");
 			e.printStackTrace();
 			return null;
 		}
@@ -150,88 +150,6 @@ class ClientThread extends Thread {
 			//erwarte korrekte userdaten
 
             login();
-            /*TODO wenn du deinen alten eigenen code benutzen möchtest:
-            *anstatt der while schleife die Methode login() verwenden
-            * (habe es nur aus dem alten code in eine eigene methode kopiert)
-            * */
-/*
-
-            while(true) {
-
-				//erwarte login request
-				String startupMessage = accept();
-
-				try {
-					JSONObject credentials = new JSONObject(startupMessage);
-
-					name = credentials.optString("user", "");
-					passwort = credentials.optString("password", "");
-
-				} catch (JSONException e) {
-					//couldnt read / malformed syntax
-				}
-
-				if (server2.userExists(name)) {
-					if (server2.checkUserPassword(name, passwort)) {
-
-					    if (!server2.isBanned( name )) {
-                            server2.insertNutzer(name, this);
-
-                            JSONObject answer = new JSONObject()
-                                    .put("type", "login")
-                                    .put("status", "ok")
-                                    .put("message", "Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
-
-                            send(answer.toString());
-
-                            //System.out.println("zweites if");
-                            break;
-                        } else {
-
-					        JSONObject answer = new JSONObject()
-                                    .put("type", "login")
-                                    .put("status", "bad")
-                                    .put("message", "Du bist gebannt.");
-
-                            send(answer.toString());
-                        }
-
-					} else {
-
-					    JSONObject answer = new JSONObject()
-                                .put("type","login")
-                                .put("status","bad")
-                                .put("message","Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
-
-					    send(answer.toString());
-
-						//System.out.println("Else");
-
-
-					}
-				} else {
-
-				    server2.createUser(name,passwort);
-				    // raum = server2.getRaum("Lobby");
-					// server2.log("Neuer Account erstellt: \t" + name);
-
-					System.out.println("Neuer Account erstellt: \t" + name);
-
-					JSONObject answer = new JSONObject()
-                            .put("type","login")
-                            .put("status","ok")
-                            .put("message",
-                                    "Du hast einen neuen Account erstellt. \nDu bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
-
-					send(answer.toString());
-
-					break;
-
-				}
-			}
-*/
-
-
 
             raum = server2.getRaum("Lobby");
             raum.addUser(name);

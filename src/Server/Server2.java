@@ -1,5 +1,6 @@
 package Server;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,19 +55,14 @@ public class Server2 {
 			GUI = new ServerLayout(this);
 			GUI.start_gui();
 			GUI.setServerlogInfo(serverName);
-			log("Server2 ist gestartet!");
 			this.socket = new ServerSocket(PORT);
-			log("Server2 hat gestartet \nZum Beenden '/stop' eingeben.");
+			log("Server hat gestartet.");
 
-			// newRoom("Lobby");
-			Raum lobby = new Raum("Lobby");
-			raumListe.put(lobby.getName(), lobby);
+            Raum lobby = new Raum("Lobby");
+            raumListe.put(lobby.getName(), lobby);
+            newRoom("Füllerfeder");
 
-			Raum lobby2 = new Raum("Lobby2");
-			raumListe.put(lobby2.getName(), lobby2);
-
-			// Benutzer benutzer = new Benutzer(null, null, lobby, null, null, null);
-			log("Vorhandene Räume: " + raumListe.size());
+			updateAllLists();
 
 			AcceptorThread acceptor = new AcceptorThread(this, socket);
 			acceptor.start();
@@ -79,11 +75,10 @@ public class Server2 {
 		}
 	}
 
-	/*
-	public static HashMap<String, String> getPasswords() {
+
+	public HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
 		return passwords;
 	}
-	*/
 
 	//passwords need a lock
 	public boolean checkUserPassword(String user, String password) {
@@ -145,7 +140,7 @@ public class Server2 {
 
 	private void saveUserData() {
 
-		FileOutputStream out = null;
+//		FileOutputStream out = null;
 
 		try {
 
@@ -179,10 +174,12 @@ public class Server2 {
 			allData.put("users", allUsers);
 			stream.write(allData.toString().getBytes());
 
+			updateAllLists();
+
 		} catch (FileNotFoundException e) {
 			//couldnt create file
 		} catch (IOException e) {
-			//couldnt open/create file
+			System.out.println("Couldn't open/create file.");
 		}
 	}
 
@@ -203,29 +200,38 @@ public class Server2 {
 						JSONObject json = new JSONObject(content);
 
 						JSONArray usersarray = json.optJSONArray("users");
+						System.out.println("Array: " + usersarray);
 
 						if (usersarray != null) {
+							System.out.println("4");
 
 							for (int i = 0; i < usersarray.length(); i++) {
+								System.out.println("5");
 								JSONObject user = usersarray.optJSONObject(i);
+								System.out.println("User: " + user);
 
 								if (user != null) {
+									System.out.println("6");
+
 									String username = user.optString("user", "");
 									String password = user.optString("password","");
                                     Boolean banned = user.optBoolean("banned",false);
 
 									if (!username.equals("") && !password.equals("")) {
+										System.out.println("7");
 										passwords.put(
 										        username,
                                                 new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
                                         );
 									}
 
+//									System.out.println("Daten: " + username + "\t" + password + "\t" + banned);
+
 								}
 							}
 
 						} else {
-							//array didnt exist
+							System.out.println("Array didn't exist.");
 						}
 
 					} catch (JSONException e) {
@@ -236,7 +242,7 @@ public class Server2 {
 					in.close();
 				}
 			} catch (IOException ex) {
-				//couldnt open file
+				System.out.println("Couldn't open file.");
 			}
 		}
 	}
@@ -281,41 +287,32 @@ public class Server2 {
 	}
 
 	protected void newRoom (String name) {
-		// TODO ein bestehender Name darf nicht gewählt werden
-		raumListe.put(name, new Raum(name));
-		updateAllLists(nutzerListe, raumListe);
+		if (!raumListe.containsKey(name) && !name.equals("Lobby")) {
+			raumListe.put(name, new Raum(name));
+			updateAllLists();
+		}
 	}
 
 	protected void editRoom (Raum room, String newName) {
-		// TODO ein bestehender Name darf nicht gewählt werden
-		// TODO Lobby darf nicht umbenannt werden
-		room.setName(newName);
-		updateAllLists(nutzerListe, raumListe);
+		if (!raumListe.containsKey(newName) && !newName.equals("Lobby")) {
+			room.setName(newName);
+			updateAllLists();
+		}
 	}
 
 	protected void deleteRoom (Raum room) {
-		// TODO Lobby permanent
-		raumListe.remove(room);
-		updateAllLists(nutzerListe, raumListe);
+		if (!room.getName().equals("Lobby")) {
+			raumListe.remove(room);
+			updateAllLists();
+		}
 	}
 
-	private void updateAllLists (HashMap nutzerListe, HashMap raumListe) {
+	protected void updateAllLists () {
 		GUI.updateLists(nutzerListe, raumListe);
 
-		ArrayList<String> nutzerlistTemp = iterateHashmap(nutzerListe);
-		String[] nutzerliste = new String[nutzerlistTemp.size()];
-		for (int i=0; i < nutzerListe.size(); i++) {
-			nutzerliste[i] = nutzerlistTemp.get(i);
+		for (String s : nutzerListe.keySet()) {
+			nutzerListe.get(s).updateLists();
 		}
-
-		ArrayList<String> roomlistTemp = iterateHashmap(raumListe);
-		String[] roomliste = new String[roomlistTemp.size()];
-		for (int i=0; i < raumListe.size(); i++) {
-			roomliste[i] = roomlistTemp.get(i);
-		}
-
-		// TODO die userList und roomList an die Clients senden
-
 	}
 
 	private ArrayList<String> iterateHashmap (HashMap<String, Object> map) {
@@ -338,20 +335,8 @@ public class Server2 {
 		} catch (IOException e) {}
 	}
 
-	protected void refreshGUI () {
-
-	}
-
 	void warnUser(ClientThread ct) {
 		ct.send("Bitte keine Dummheiten mehr.");
 	}
-	void kickUser(ClientThread ct) {
-		ct.send("Das wars.");
-		ct.send(null);
-	}
-	/*void bannUser(ClientThread ct) {
-		ct.send(null);
-		passwords.get(ct.getName()) = "äölkjhgfddssasaszuiejhj";
-	}*/
 
 }
