@@ -10,7 +10,6 @@ public class ServerLayout {
     private JTabbedPane tabbedPane1;
     private JList roomList;
     private JList userList;
-    private JTextField textField1;
     private JComboBox chooseAction;
     private JButton button1;
     private JTextArea LogDisplay;
@@ -39,19 +38,22 @@ public class ServerLayout {
                 switch ((String) chooseAction.getSelectedItem()) {
 
                     case "Raum umbenennen":
-                        response.setText(roomList.getSelectedValue().toString() + "wurde in " + textField1.getText() + " umbenannt.");//TODO zum testen die einzelen sachen in einzele zeilen schreiebn
-                        server2.editRoom((Raum) roomList.getSelectedValue(), textField1.getText());
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
+                        String newName = actionInformation.getText();
+                        if (!newName.equals("Lobby")) {
+                            response.setText(roomList.getSelectedValue().toString() + "wurde in '" + newName + "' umbenannt.");
+                            server2.editRoom((Raum) roomList.getSelectedValue(), actionInformation.getText());
+                        }
                         break;
                     case "Raum löschen":
                         response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
                         server2.deleteRoom((Raum) roomList.getSelectedValue());
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Raum erstellen":
-                        server2.newRoom(textField1.getText());
-                        response.setText("Raum " + textField1.getText() + "wurde erstellt.");
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
+                        String name = actionInformation.getText();
+                        if (!name.equals("Lobby")) {
+                            server2.newRoom(name);
+                            response.setText("Raum '" + actionInformation.getText() + "' wurde erstellt.");
+                        }
                         break;
                     case "Benutzer verwarnen":
                         server2.warnUser((ClientThread) userList.getSelectedValue());
@@ -60,18 +62,15 @@ public class ServerLayout {
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
                         server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
                         server2.banUser(((ClientThread) userList.getSelectedValue()).getUserName());
-                        updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
-//                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
-                    case "Server2 umbennen":
-                        server2.editServername(textField1.getText());
-                        response.setText("Der Server2 " + server2.serverName + " wurde in " + textField1.getText() + "umbenannt.");
-                        serverlogInfo.setText("Server2 '" + textField1.getText() + "' ist online.");
+                    case "Server umbennen":
+                        String newServerName = actionInformation.getText();
+                        server2.editServername(newServerName);
+                        response.setText("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
                         break;
                     case "Passwortdatei lesen":
 //                        TODO s.readPasswordDatei();
@@ -120,4 +119,5 @@ public class ServerLayout {
     public void setServerlogInfo(String serverName) {
         serverlogInfo.setText("Server2 '" + serverName + "' ist online.");
     }
+
 }

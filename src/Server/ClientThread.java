@@ -236,26 +236,25 @@ class ClientThread extends Thread {
 
 							}
 							break;
-							case "logout":
-								System.out.println(name + " hat seine Verbindung abgebrochen");
-								sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
+                        case "logout":
+                            System.out.println(name + " hat seine Verbindung abgebrochen");
+                            sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
 
-								if ( client != null ) {
-									try {
-										raum.removeUser(name);
-										server2.removeNutzer(this);
-										client.close();
-										//Server2.getRaumListe().remove(name); wtf's this supposed to do?!
-									} catch (IOException e) {
+                            if ( client != null ) {
+                                try {
+                                    raum.removeUser(name);
+                                    server2.removeNutzer(this);
+                                    client.close();
+                                    //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
+                                } catch (IOException e) {
 
-									}
-								}
+                                }
+                            }
 
-								break;
-								case "":break;
-								default:
-									server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
-									break;
+                            break;
+                        default:
+                            server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
+                            break;
 
 					}
 
@@ -286,14 +285,16 @@ class ClientThread extends Thread {
 
         // send("\nAktuelle Nutzer:");
         JSONArray onlineListe = new JSONArray();
-        for (String _x : raum.getNutzerList()) {
-            onlineListe.put(_x);
-        }
+        if (raum != null) {
+            for (String _x : raum.getNutzerList()) {
+                onlineListe.put(_x);
+            }
 
             /*TODO wenn du deinen alten eigenen code benutzen möchtest:
             *anstatt der while schleife die Methode login() verwenden
             * (habe es nur aus dem alten code in eine eigene methode kopiert)
             * */
+        }
 
 
         JSONObject nutzer = new JSONObject()

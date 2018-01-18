@@ -134,7 +134,7 @@ public class Server2 {
 	}
 
 	public void removeNutzer(ClientThread name) {
-		nutzerListe.remove(name);
+		nutzerListe.remove(name.getName());
 		updateAllLists();
 	}
 
@@ -264,12 +264,17 @@ public class Server2 {
         saveUserData();
 
 	    kickUser(user);
+
+	    updateAllLists();
+
     }
 
     public void kickUser(String user) {
 
 	    if (nutzerListe.containsKey(user))
 	        nutzerListe.get(user).kick();
+
+	    updateAllLists();
 
     }
 
@@ -296,14 +301,17 @@ public class Server2 {
 	protected void editRoom (Raum room, String newName) {
 		if (!raumListe.containsKey(newName) && !newName.equals("Lobby")) {
 			room.setName(newName);
+			// auch String ändern
+            // Fehler: Füllerfeder=hjhlk (0 Benutzer)
 			updateAllLists();
 		}
 	}
 
 	protected void deleteRoom (Raum room) {
-		if (!room.getName().equals("Lobby")) {
-			raumListe.remove(room);
+	    if (!room.getName().equals("Lobby")) {
+			raumListe.remove(room.getName());
 			updateAllLists();
+			System.out.println("Raumliste: " + raumListe);
 		}
 	}
 
@@ -339,4 +347,5 @@ public class Server2 {
 		ct.send("Bitte keine Dummheiten mehr.");
 	}
 
+	// TODO readPasswords()
 }
