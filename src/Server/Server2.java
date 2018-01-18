@@ -1,6 +1,5 @@
 package Server;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +48,6 @@ public class Server2 {
 		this.passwords = new HashMap<>();
 
 		//read passwords, but don't show
-		loadUserData(false);
 
 		try {
 			GUI = new ServerLayout(this);
@@ -58,10 +56,12 @@ public class Server2 {
 			this.socket = new ServerSocket(PORT);
 			log("Server hat gestartet.");
 
-            Raum lobby = new Raum("Lobby");
-            raumListe.put(lobby.getName(), lobby);
-            newRoom("Füllerfeder");
+			Raum lobby = new Raum("Lobby");
+			raumListe.put(lobby.getName(), lobby);
+			newRoom("Füllerfeder");
 
+			// beschreibt Hashmap
+			loadUserData(false);
 			updateAllLists();
 
 			AcceptorThread acceptor = new AcceptorThread(this, socket);
@@ -76,12 +76,9 @@ public class Server2 {
 	}
 
 
-	public HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
-		return passwords;
-	}
-
 	//passwords need a lock
-	public boolean checkUserPassword(String user, String password) {
+
+    public boolean checkUserPassword(String user, String password) {
 		if (passwords.containsKey(user)) {
 			//password match
 			return passwords.get(user).getKey().equals(password);
@@ -89,11 +86,6 @@ public class Server2 {
 			return false;
 		}
 	}
-
-	public boolean isBanned(String user) {
-		return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
-	}
-
 	public boolean userExists(String user) {
 		return passwords.containsKey(user);
 	}
@@ -105,22 +97,17 @@ public class Server2 {
 		saveUserData();
 	}
 
-	//raumliste needs a lock
-	public Set<String> getRaumListe() {
+
+    //raumliste needs a lock
+    public Set<String> getRaumListe() {
 		return raumListe.keySet();
 	}
 
-	protected HashMap getRaumListeHashMap() {
+    protected HashMap getRaumListeHashMap() {
 		return nutzerListe;
 	}
-
 	public Raum getRaum(String name) {
 		return raumListe.containsKey(name) ? raumListe.get(name) : null;
-	}
-
-	//nutzerliste needs a lock
-	public Set<String> getNutzerListe() {
-		return nutzerListe.keySet();
 	}
 
 	protected HashMap getNutzerListeHashMap() {
@@ -194,8 +181,9 @@ public class Server2 {
 
 		File users = new File("users.txt");
 		if (showPasswordlist) {
-			// TODO Liste abgrenzen
-			log("Name\tPasswort\tgebannt");
+		    log("---------------------------------------------------------------------");
+			log("Name\t| Passwort\t| gebannt");
+			log("---------------------------------------------------------------------");
 		}
 		if (users.isFile() && users.canRead()) {
 			try {
@@ -235,12 +223,9 @@ public class Server2 {
                                                 new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
                                         );
 										if (showPasswordlist) {
-											log(username + "\t" + password + "\t" + banned);
+											log(username + "\t| " + password + "\t| " + banned);
 										}
 									}
-
-//									System.out.println("Daten: " + username + "\t" + password + "\t" + banned);
-
 								}
 							}
 
@@ -258,7 +243,12 @@ public class Server2 {
 			} catch (IOException ex) {
 				System.out.println("Couldn't open file.");
 			}
+
+			if (showPasswordlist) {
+				log("---------------------------------------------------------------------");
+			}
 		}
+
 	}
 
 	public void sendToUser (String nutzer, String message) {
@@ -282,6 +272,7 @@ public class Server2 {
 	    updateAllLists();
 
     }
+
     boolean isbanned(String user){
 			return passwords.get(user).getValue();
 	}
@@ -295,14 +286,13 @@ public class Server2 {
 
     }
 
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
 	    //init the server
 	    Server2.getInstance();
 
 
 	}
-
 	protected void log(String message) {
 		GUI.appendLog(message);
 		System.out.println(message);
@@ -344,24 +334,9 @@ public class Server2 {
 		}
 	}
 
-	private ArrayList<String> iterateHashmap (HashMap<String, Object> map) {
-		ArrayList temp = new ArrayList();
-
-		for(String key : map.keySet()) {
-			temp.add(key);
-		}
-		return temp;
-	}
-
 	protected void editServername (String newName) {
 		serverName = newName;
 		GUI.setServerlogInfo(newName);
-	}
-
-	public void end() {
-		try {
-			socket.close();
-		} catch (IOException e) {}
 	}
 
 	void warnUser(ClientThread ct) {
@@ -379,8 +354,37 @@ public class Server2 {
 		return nutzerListe.containsKey(name);
 	}
 
-	boolean userExist(String name){
-		return passwords.containsKey(name);
-	}
 
+
+    public HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
+        return passwords;
+    }
+
+    public boolean isBanned(String user) {
+        return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
+    }
+
+    //nutzerliste needs a lock
+    public Set<String> getNutzerListe() {
+        return nutzerListe.keySet();
+    }
+
+    boolean userExist(String name){
+        return passwords.containsKey(name);
+    }
+
+    private ArrayList<String> iterateHashmap (HashMap<String, Object> map) {
+        ArrayList temp = new ArrayList();
+
+        for(String key : map.keySet()) {
+            temp.add(key);
+        }
+        return temp;
+    }
+
+    public void end() {
+        try {
+            socket.close();
+        } catch (IOException e) {}
+    }
 }

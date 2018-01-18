@@ -1,4 +1,5 @@
 .idea/
 *.iml
 out/
-users.text
+users.txt
+verlauf.txt
