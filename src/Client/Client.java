@@ -169,7 +169,7 @@ public class Client {
 	    return loginConfirmed;
     }
 
-    void addRooms(JSONArray array) {
+    void addUsers(JSONArray array) {
 
         if (array != null) {
 
@@ -178,11 +178,13 @@ public class Client {
         	for (int i = 0; i < array.length(); i++) {
                 listUser.addElement(array.optString(i,""));
             }
+
+            userlist.setModel(listUser);
         }
 
     }
 
-    void addUsers(JSONArray array) {
+    void addRooms(JSONArray array) {
 
         if (array != null) {
 
@@ -193,30 +195,16 @@ public class Client {
             }
         }
 
+        roomlist.setModel(listRooms);
+
     }
 
-	// der Client.Client kann Nachrichten über den printWriterOutputStream senden
-	// dieser muss jedoch durch flush() sofort geleert werden, damit nicht erst eine große
-	// Nachrichtenansammlung geschickt wird
+
 	public void senden(String message) {
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
 
-	/*
-	// Nachrichten koennen vom Server2.Server2 entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
-	static String annehmen(BufferedReader bufferedReaderInputStream) {
-		try {
-			return bufferedReaderInputStream.readLine(); 
-		} catch (IOException e) {
-			appendMessage("Eine Nachricht konnte vom Server2.Server2 nicht angenommen werden.");
-			e.printStackTrace();
-			return null;
-		}
-	}
-	*/
-	
 	
 	public static void main(String args[]) {
 		Client C = new Client();

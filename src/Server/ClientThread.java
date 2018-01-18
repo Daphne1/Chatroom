@@ -89,7 +89,7 @@ class ClientThread extends Thread {
 
 	@Override
 	public String toString() {
-		return "[" + raum.getName() + "] /t" + name;
+		return "[" + raum.getName() + "] " + name;
 	}
 
 
@@ -180,7 +180,7 @@ class ClientThread extends Thread {
 
             raum = server2.getRaum("Lobby");
             raum.addUser(name);
-            server2.insertNutzer(name, this);//Johannes
+            server2.insertNutzer(name, this);
 
 //TODO eigene methoden
 
