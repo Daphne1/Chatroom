@@ -108,31 +108,53 @@ class ClientThread extends Thread {
         }
     }
 
-    private void login() {
-       // while(true)
-        {
-            send("Name: "); // null sendet an den Client
-            String name = accept();
-            this.name = name;
-            server2.log(name+ " ist jetzt da");//Johannes DEBUG
-            send("Passwort: ");
-            String passwort = accept();
-            server2.log("passwort: "+ passwort);//Johannes DEBUG
-/*
-            if (!hmap.containsKey(name)) {          //TODO umbennenen
-                hmap.put(name, passwort);
-                send("Du hast einen neuen Account erstellt.");
-                System.out.println("Neuer Account registriert: " + name);
-            }
-            if (hmap.get(name).equals(passwort)) {// TODO oder die checkPassword benutzen
-                send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
-                break;
-            } else {
-                send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
-            }
-            */
-        }
-    }
+	private void login() {
+		while(true)
+		{
+			JSONObject request = new JSONObject();
+			request
+					.put("type", "message")
+					.put("message", "Name: ");
+
+			send(request.toString());
+
+//            send("Name: "); // null sendet an den Client
+			String nachricht = accept();
+
+			JSONObject json = new JSONObject(nachricht);
+//			String type = json.optString("type","");
+			String name = json.optString("message", "");
+
+			this.name = name;
+			server2.log(name+ " ist jetzt da");//Johannes DEBUG
+
+			request.put("message", "Passwort: ");
+			send(request.toString());
+
+			// send("Passwort: ");
+			nachricht = accept();
+
+			json = new JSONObject(nachricht);
+//			String type = json.optString("type","");
+			String passwort = json.optString("message", "");
+
+//            String passwort = accept();
+			server2.log("passwort: "+ passwort);//Johannes DEBUG
+
+			if (!server2.checkUserPassword(name, passwort)) {          //TODO umbennenen
+				server2.createUser(name, passwort);
+				send("Du hast einen neuen Account erstellt.");
+				System.out.println("Neuer Account registriert: " + name);
+			}
+			if (checkPassword(passwort)) {// TODO oder die checkPassword benutzen
+				send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+				break;
+			} else {
+				send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+			}
+		}
+	}
+
     public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
