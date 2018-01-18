@@ -28,6 +28,17 @@ class ClientThread extends Thread {
     ClientThread(Server2 server2, Socket client) {
 		this.client = client;
 		this.server2 = server2;
+
+		try {
+			DataOutputStream output = new DataOutputStream(client.getOutputStream());
+			pWriterOutputStream = new PrintWriter(output, true);
+			InputStream inputStream = client.getInputStream();
+			OutputStream outputStream = client.getOutputStream();
+			input = new BufferedReader(new InputStreamReader(inputStream));
+		} catch (IOException e) {
+			server2.log("Fehler im Konstruktor des ClientThreads von " + server2.getNutzerListeHashMap().get(this));
+			e.printStackTrace();
+		}
 	}
 
     protected String getUserName() {
@@ -53,10 +64,11 @@ class ClientThread extends Thread {
 	}
 
 	void send(String message) {
-	    System.out.println("ich sende:"+message); //Johannes DEBUG
+
+//	    System.out.println("ich sende:"+message); //Johannes DEBUG
         //TODO jason object erstellen bzw wo die funktion benutz wird durch die methoden die json object erstellen ersetzen (auser in den methoden)
-			pWriterOutputStream.println(message);
-			pWriterOutputStream.flush();
+		pWriterOutputStream.println(message);
+		pWriterOutputStream.flush();
 	}
 	
 	void sendToRoom (String message) {
@@ -134,7 +146,10 @@ class ClientThread extends Thread {
 
 			if (!server2.checkUserPassword(name, passwort)) {
 				server2.createUser(name, passwort);
-				send("Du hast einen neuen Account erstellt.");//TODO Json
+
+				request.put("message", "Du hast einen neuen Account erstellt.");
+				send(request.toString());
+
 				server2.log("Neuer Account registriert: " + name);
 			}
 			if (checkPassword(passwort)) {
@@ -157,11 +172,15 @@ class ClientThread extends Thread {
 					send(request.toString());
 					login();
 				}
-				send("Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");//TODO Json
+
+				request.put("message", "Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+				send(request.toString());
+
 				server2.log(name + " ist jetzt angemeldet");
 				break;
 			} else {
-				send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");//TODO Json
+				request.put("message", "Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+				send(request.toString());
 			}
 		}
 	}
@@ -170,7 +189,7 @@ class ClientThread extends Thread {
 		// Bearbeitung einer aufgebauten Verbindung
 		try {
 			server2.log("ClientThread läuft");
-            //TODO in den Construktor verschieben
+
             DataOutputStream output = new DataOutputStream(client.getOutputStream());
             pWriterOutputStream = new PrintWriter(output, true);
 			InputStream inputStream = client.getInputStream();
@@ -237,7 +256,7 @@ class ClientThread extends Thread {
 		}
 
 		if (message == null) {
-			//handle malformed message
+			closeClientThread();
 		} else {
 
 			//TODO switch each type
@@ -262,7 +281,7 @@ class ClientThread extends Thread {
 							send(
 									new JSONObject()
 											.put("type","message")
-											.put("message","Raum existiert nicht")
+											.put("message","Raum existiert nicht.")
 											.put("status","ok")
 											.toString());
 						}

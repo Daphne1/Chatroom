@@ -364,7 +364,14 @@ public class Server2 {
 	}
 
 	void warnUser(ClientThread ct) {
-		ct.send("Bitte keine Dummheiten mehr.");
+
+        JSONObject nachricht = new JSONObject()
+                .put("type","message")
+                .put("message", "Bitte keine Dummheiten mehr.")
+                .put("status", "ok");
+
+		ct.send(nachricht.toString());
+
 	}
 
 	boolean nutzerlisteContainsUser(String name){

@@ -1,0 +1,1 @@
+{"users":[{"password":"WÃ¼rdig","banned":true,"user":"Anton"},{"password":"Schäfer","banned":false,"user":"Patricia"},{"password":"Zimmermann","banned":false,"user":"Ian"}]}

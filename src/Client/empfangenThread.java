@@ -49,11 +49,8 @@ class empfangenThread extends Thread {
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
-				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht); //Johannes es ist beim der clientThread senden merhode nicht automatische eine json message
+				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht);
 
-				//System.out.println(ankommendeNachricht);
-
-				//switch types
 				JSONObject json = null;
 				String type = "";
 
