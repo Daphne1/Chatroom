@@ -60,8 +60,9 @@ public class Server2 {
 			this.socket = new ServerSocket(PORT);
 			log("Server hat gestartet.");
 
-			newRoom("Lobby");
-			newRoom("Füllerfeder");
+            Raum lobby = new Raum("Lobby");
+            raumListe.put(lobby.getName(), lobby);
+            newRoom("Füllerfeder");
 
 			updateAllLists();
 
@@ -169,7 +170,6 @@ public class Server2 {
 						);
 
 				allUsers.put(user);
-				allUsers.put("\n");
 
 			}
 
