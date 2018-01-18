@@ -48,8 +48,8 @@ public class Server2 {
 		this.nutzerListe = new HashMap<>();
 		this.passwords = new HashMap<>();
 
-		//read passwords
-		loadUserData();
+		//read passwords, but don't show
+		loadUserData(false);
 
 		try {
 			GUI = new ServerLayout(this);
@@ -183,9 +183,17 @@ public class Server2 {
 		}
 	}
 
-	private void loadUserData() {
+	protected void loadUserData() {
+		loadUserData(true);
+	}
+
+	private void loadUserData(Boolean showPasswordlist) {
 
 		File users = new File("users.txt");
+		if (showPasswordlist) {
+			// TODO Liste abgrenzen
+			log("Name\tPasswort\tgebannt");
+		}
 		if (users.isFile() && users.canRead()) {
 			try {
 				FileInputStream in = new FileInputStream(users);
@@ -223,6 +231,9 @@ public class Server2 {
 										        username,
                                                 new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
                                         );
+										if (showPasswordlist) {
+											log(username + "\t" + password + "\t" + banned);
+										}
 									}
 
 //									System.out.println("Daten: " + username + "\t" + password + "\t" + banned);
@@ -352,5 +363,8 @@ public class Server2 {
 		ct.send("Bitte keine Dummheiten mehr.");
 	}
 
-	// TODO readPasswords()
+	private void showPasswords() {
+
+	}
+
 }

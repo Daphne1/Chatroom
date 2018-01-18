@@ -38,16 +38,20 @@ public class ServerLayout {
                 switch ((String) chooseAction.getSelectedItem()) {
 
                     case "Raum umbenennen":
-                        String newName = actionInformation.getText();
-                        if (!newName.equals("Lobby") && !chooseAction.getSelectedItem().equals(server2.getRaumListeHashMap().get("Lobby"))) {
-                            response.setText(roomList.getSelectedValue().toString() + "wurde in '" + newName + "' umbenannt.");
-                            server2.editRoom((Raum) roomList.getSelectedValue(), actionInformation.getText());
+                        if (roomList.getSelectedValue() != null) {
+                            String newName = actionInformation.getText();
+                            if (!newName.equals("Lobby") && !chooseAction.getSelectedItem().equals(server2.getRaumListeHashMap().get("Lobby"))) {
+                                response.setText(roomList.getSelectedValue().toString() + "wurde in '" + newName + "' umbenannt.");
+                                server2.editRoom((Raum) roomList.getSelectedValue(), actionInformation.getText());
+                            }
                         }
                         break;
                     case "Raum löschen":
-                        if(!((Raum) roomList.getSelectedValue()).getName().equals("Lobby")) {
-                            response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
-                            server2.deleteRoom((Raum) roomList.getSelectedValue());
+                        if (roomList.getSelectedValue() != null) {
+                            if (!((Raum) roomList.getSelectedValue()).getName().equals("Lobby")) {
+                                response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
+                                server2.deleteRoom((Raum) roomList.getSelectedValue());
+                            }
                         }
                         break;
                     case "Raum erstellen":
@@ -58,16 +62,22 @@ public class ServerLayout {
                         }
                         break;
                     case "Benutzer verwarnen":
-                        server2.warnUser((ClientThread) userList.getSelectedValue());
-                        response.setText("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
+                        if (userList.getSelectedValue() != null) {
+                            server2.warnUser((ClientThread) userList.getSelectedValue());
+                            response.setText("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
+                        }
                         break;
                     case "Benutzer kicken":
-                        response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                        if (userList.getSelectedValue() != null) {
+                            response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
+                            server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                        }
                         break;
                     case "Benutzer ausschließen":
-                        response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
-                        server2.banUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                        if (userList.getSelectedValue() != null) {
+                            response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
+                            server2.banUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                        }
                         break;
                     case "Server umbennen":
                         String newServerName = actionInformation.getText();
@@ -75,7 +85,7 @@ public class ServerLayout {
                         response.setText("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
                         break;
                     case "Passwortdatei lesen":
-//                        TODO s.readPasswordDatei();
+                        server2.loadUserData();
                         response.setText("Die Passwortdatei wurde ausgelesen.");
                         break;
                 }
