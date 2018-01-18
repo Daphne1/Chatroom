@@ -33,8 +33,8 @@ public class Client {
     private boolean enteredUser = false;
 	private boolean enteredPassword = false;
 	private boolean loginConfirmed = false;
-	private String user;
-	private String pw;
+	private String user = "";
+	private String pw = "";
 	private boolean started;
 
 	//ROOMNAME, STRING
@@ -48,6 +48,8 @@ public class Client {
         try {
             server = new Socket("localhost", 3456);
             appendMessage("erfolgreich zu 'localhost' Port: 3456 verbunden");
+
+            appendMessage("Bitte Nutzername eingeben: ");
 
             // in
             InputStream inputStream = server.getInputStream();
@@ -66,11 +68,14 @@ public class Client {
 		sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-/*
                 //anfang senfo login
 				if (!enteredUser) {
-					user = inputField.getText();
+				    user = inputField.getText();
 					enteredUser = true;
+
+					appendMessage(user);
+                    inputField.setText("");
+				    appendMessage("Bitte Passwort eingeben: ");
 				} else if (!enteredPassword) {
 					pw = inputField.getText();
 					enteredPassword = true;
@@ -80,6 +85,7 @@ public class Client {
                             .put("user",user)
                             .put("password",pw);
 
+                    inputField.setText("");
                     senden(loginrequest.toString());
 
 				} else if (loginConfirmed) {
@@ -119,8 +125,7 @@ public class Client {
                     inputField.setText("");
                 }
                 //ende senfo login
-                */
-            eingabe();
+
 
 
             }

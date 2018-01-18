@@ -132,10 +132,10 @@ public class ServerLayout {
     }
 
     public void setName(String s) {
-        //name.setText(s);      //TODO das label scheint nicht zu existieren
+        // TODO aktuellen Raum in Tabelle markieren
     }
 
     public void setServerlogInfo(String serverName) {
-        serverlogInfo.setText("Server2 '" + serverName + "' ist online.");
+        serverlogInfo.setText("Server '" + serverName + "' ist online.");
     }
 }

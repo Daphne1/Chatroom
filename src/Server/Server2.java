@@ -135,7 +135,7 @@ public class Server2 {
 	}
 
 	public void removeNutzer(ClientThread name) {
-		nutzerListe.remove(name);
+		if (name != null) nutzerListe.remove(name);
 		updateAllLists();
 	}
 
@@ -193,7 +193,6 @@ public class Server2 {
 		if (users.isFile() && users.canRead()) {
 			System.out.println("2");
 			try {
-//				System.out.println("3");
 				FileInputStream in = new FileInputStream(users);
 				try {
 					String content = "";
@@ -214,15 +213,15 @@ public class Server2 {
 
 							for (int i = 0; i < usersarray.length(); i++) {
 								System.out.println("5");
-								JSONArray user = usersarray.optJSONArray(i);
+								JSONObject user = usersarray.optJSONObject(i);
 								System.out.println("User: " + user);
 
 								if (user != null) {
 									System.out.println("6");
 
-									String username = user.optString(2, "");
-									String password = user.optString(0,"");
-                                    Boolean banned = user.optBoolean(1,false);
+									String username = user.optString("user", "");
+									String password = user.optString("password","");
+                                    Boolean banned = user.optBoolean("banned",false);
 
 									if (!username.equals("") && !password.equals("")) {
 										System.out.println("7");
@@ -294,22 +293,24 @@ public class Server2 {
 	}
 
 	protected void newRoom (String name) {
-		// TODO ein bestehender Name darf nicht gewählt werden
-		raumListe.put(name, new Raum(name));
-		updateAllLists();
+		if (!raumListe.containsKey(name) && !name.equals("Lobby")) {
+			raumListe.put(name, new Raum(name));
+			updateAllLists();
+		}
 	}
 
 	protected void editRoom (Raum room, String newName) {
-		// TODO ein bestehender Name darf nicht gewählt werden
-		// TODO Lobby darf nicht umbenannt werden
-		room.setName(newName);
-		updateAllLists();
+		if (!raumListe.containsKey(newName) && !newName.equals("Lobby")) {
+			room.setName(newName);
+			updateAllLists();
+		}
 	}
 
 	protected void deleteRoom (Raum room) {
-		// TODO Lobby permanent
-		raumListe.remove(room);
-		updateAllLists();
+		if (!room.getName().equals("Lobby")) {
+			raumListe.remove(room);
+			updateAllLists();
+		}
 	}
 
 	protected void updateAllLists () {
@@ -339,8 +340,6 @@ public class Server2 {
 			socket.close();
 		} catch (IOException e) {}
 	}
-
-
 
 	void warnUser(ClientThread ct) {
 		ct.send("Bitte keine Dummheiten mehr.");

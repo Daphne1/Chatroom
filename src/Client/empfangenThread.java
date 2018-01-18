@@ -24,8 +24,6 @@ class empfangenThread extends Thread {
 		this.client = client;
 	}
 
-	// Nachrichten koennen vom Server2.Server2 entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
 	private String annehmen() {
 		try {
 
@@ -49,7 +47,7 @@ class empfangenThread extends Thread {
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
-				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht); //Johannes es ist beim der clientThread senden merhode nicht automatische eine json message
+				client.appendMessage(ankommendeNachricht); //Johannes es ist beim der clientThread senden merhode nicht automatische eine json message
 
 				//System.out.println(ankommendeNachricht);
 

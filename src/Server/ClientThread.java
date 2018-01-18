@@ -11,6 +11,7 @@ class ClientThread extends Thread {
 	private Server2 server2;
 		
 	private String name;
+	private String passwort;
 	boolean valid = true;
 
 	private Raum raum;
@@ -105,16 +106,14 @@ class ClientThread extends Thread {
     }
 
     private void login() {
-       // while(true)
-        {
-            send("Name: "); // null sendet an den Client
+       //while(true)
+        //{
+/*
+            send("Name: ");
             String name = accept();
             this.name = name;
-            server2.log(name+ " ist jetzt da");//Johannes DEBUG
             send("Passwort: ");
             String passwort = accept();
-            server2.log("passwort: "+ passwort);//Johannes DEBUG
-/*
             if (!hmap.containsKey(name)) {          //TODO umbennenen
                 hmap.put(name, passwort);
                 send("Du hast einen neuen Account erstellt.");
@@ -127,7 +126,82 @@ class ClientThread extends Thread {
                 send("Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
             }
             */
-        }
+
+
+			while(true) {
+
+				//erwarte login request
+				String startupMessage = accept();
+
+				try {
+					JSONObject credentials = new JSONObject(startupMessage);
+
+					name = credentials.optString("user", "");
+					passwort = credentials.optString("password", "");
+
+				} catch (JSONException e) {
+					//couldnt read / malformed syntax
+				}
+
+				if (server2.userExists(name)) {
+					if (server2.checkUserPassword(name, passwort)) {
+
+						if (!server2.isBanned( name )) {
+							server2.insertNutzer(name, this);
+
+							JSONObject answer = new JSONObject()
+									.put("type", "login")
+									.put("status", "ok")
+									.put("message", "Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+
+							send(answer.toString());
+
+							//System.out.println("zweites if");
+							break;
+						} else {
+
+							JSONObject answer = new JSONObject()
+									.put("type", "login")
+									.put("status", "bad")
+									.put("message", "Du bist gebannt.");
+
+							send(answer.toString());
+						}
+
+					} else {
+
+						JSONObject answer = new JSONObject()
+								.put("type","login")
+								.put("status","bad")
+								.put("message","Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
+
+						send(answer.toString());
+
+						//System.out.println("Else");
+
+
+					}
+				} else {
+
+					server2.createUser(name,passwort);
+					// raum = server2.getRaum("Lobby");
+					// server2.log("Neuer Account erstellt: \t" + name);
+
+					System.out.println("Neuer Account erstellt: \t" + name);
+
+					JSONObject answer = new JSONObject()
+							.put("type","login")
+							.put("status","ok")
+							.put("message",
+									"Du hast einen neuen Account erstellt. \nDu bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+
+					send(answer.toString());
+
+					break;
+
+				}
+			}
+        //}
     }
     public void run(){
 		// Bearbeitung einer aufgebauten Verbindung
@@ -351,17 +425,18 @@ class ClientThread extends Thread {
 		//-> Funktion
 
 		// send("\nAktuelle Nutzer:");
-		JSONArray onlineListe = new JSONArray();
-		for (String _x : raum.getNutzerList()) {
-			onlineListe.put(_x);
+		if (raum != null) {
+			JSONArray onlineListe = new JSONArray();
+			for (String _x : raum.getNutzerList()) {
+				onlineListe.put(_x);
+			}
+			JSONObject nutzer = new JSONObject()
+					.put("type","nutzer")
+					.put("message",onlineListe)
+					.put("status","ok");
+
+			send(nutzer.toString());
 		}
-
-		JSONObject nutzer = new JSONObject()
-				.put("type","nutzer")
-				.put("message",onlineListe)
-				.put("status","ok");
-
-		send(nutzer.toString());
 		////////////////////////////////////
 
 
