@@ -3,35 +3,35 @@ package Server;
 import java.util.LinkedList;
 
 public class Raum {
+
 	private String name;
 	private LinkedList<String> nutzer = new LinkedList<>();
 	
 	Raum (String raumName) {
 		this.name = raumName;
 	}
-	
-	public int getNumberOfPersons () {
+
+
+	protected int getNumberOfPersons () {
 		return nutzer.size();
 	}
-	public void removeUser(String name) {
-		nutzer.remove(name);
-	}
-	public void addUser(String name) {
+
+	protected void addUser(String name) {
 		nutzer.add(name);
+	}
+
+	protected void removeUser(String name) {
+		nutzer.remove(name);
 	}
 
 	protected String getName() {
 		return name;
 	}
-	protected void setName(String name) {
-		this.name = name;
-	}
 
-	public LinkedList<String> getNutzerList() {
+	protected LinkedList<String> getNutzerList() {
 		return nutzer;
 	}
-
-	public void setNutzerList(LinkedList<String> nutzer) {
+	protected void setNutzerList(LinkedList<String> nutzer) {
 		this.nutzer = nutzer;
 	}
 

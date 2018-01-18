@@ -65,8 +65,6 @@ class ClientThread extends Thread {
 
 	void send(String message) {
 
-//	    System.out.println("ich sende:"+message); //Johannes DEBUG
-        //TODO jason object erstellen bzw wo die funktion benutz wird durch die methoden die json object erstellen ersetzen (auser in den methoden)
 		pWriterOutputStream.println(message);
 		pWriterOutputStream.flush();
 	}
@@ -82,8 +80,9 @@ class ClientThread extends Thread {
 
 	    for (String _x : raum.getNutzerList()) {
 
-	        server2.sendToUser(_x, toSend);
-
+	        if (!_x.equals(this.getUserName())) {
+                server2.sendToUser(_x, toSend);
+            }
 		}
 	}
 
@@ -145,6 +144,7 @@ class ClientThread extends Thread {
 			request.put("message", "Passwort: ");
 			send(request.toString());
 			nachricht = accept();
+
 			json = new JSONObject(nachricht);
 			String passwort = json.optString("message", "");
 
@@ -201,11 +201,8 @@ class ClientThread extends Thread {
 		raum.addUser(name);
 		server2.insertNutzer(name, this);
 
-//TODO eigene methoden
-
 		updateLists();
 
-//TODO name vorher setzen
 		sendToRoom(name + " hat sich eingeloggt.");
 
 		while(valid) {
@@ -225,6 +222,7 @@ class ClientThread extends Thread {
 			}
 		}
 
+		// TODO in log: alles über append in verlauf.txt einschreiben
 	private void loop(){
 		String in = accept();
 
@@ -243,9 +241,6 @@ class ClientThread extends Thread {
 			closeClientThread();
 		} else {
 
-			//TODO switch each type
-
-			//switch each type
 			switch (type){
 				case "message":
 					String nachricht = message.optString("message","");
@@ -302,26 +297,21 @@ class ClientThread extends Thread {
         //Sende nutzerliste zum nutzer
         //-> Funktion
 
-        // send("\nAktuelle Nutzer:");
+        // aktuelle Nutzer
         JSONArray onlineListe = new JSONArray();
+
         if (raum != null) {
             for (String _x : raum.getNutzerList()) {
                 onlineListe.put(_x);
             }
 
-            /*TODO wenn du deinen alten eigenen code benutzen möchtest:
-            *anstatt der while schleife die Methode login() verwenden
-            * (habe es nur aus dem alten code in eine eigene methode kopiert)
-            * */
+            JSONObject nutzer = new JSONObject()
+                    .put("type","nutzer")
+                    .put("message", onlineListe)
+                    .put("status","ok");
+
+            send(nutzer.toString());
         }
-
-
-        JSONObject nutzer = new JSONObject()
-                .put("type","nutzer")
-                .put("message",onlineListe)
-                .put("status","ok");
-
-        send(nutzer.toString());
         ////////////////////////////////////
 
 
