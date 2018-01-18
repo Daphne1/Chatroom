@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -134,6 +136,19 @@ public class Client {
                 eingabe();
             }
         });
+        roomlist.addMouseListener(new MouseAdapter() {
+                                       public void mouseClicked(MouseEvent me) {                                             //kontextmenue
+                                           // if right mouse button clicked (or me.isPopupTrigger())
+                                           if (SwingUtilities.isRightMouseButton(me)
+                                                   && !roomlist.isSelectionEmpty()
+                                                   && roomlist.locationToIndex(me.getPoint())
+                                                   == roomlist.getSelectedIndex()) {
+                                               popupMenuRoom.show(roomlist, me.getX(), me.getY());
+
+                                           }
+                                       }
+                                   }
+        );
         popupMenuRoom.add(switchRoom = new JMenuItem("Raum wechseln"));
         switchRoom.addActionListener(new ActionListener() {
             @Override
@@ -260,7 +275,7 @@ public class Client {
         JSONObject request = new JSONObject();
         String message = roomlist.getSelectedValue();
         request
-                .put("type", "message")
+                .put("type", "switchRoom")
                 .put("message", message);
 
         senden(request.toString());

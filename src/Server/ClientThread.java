@@ -210,64 +210,53 @@ class ClientThread extends Thread {
 				    //TODO switch each type
 
 					//switch each type
-					if (type.equals("message")) {
+					switch (type){
+						case "message":
+							String nachricht = message.optString("message","");
+							if (!nachricht.equals("")) {
+								sendToRoom(name + ":\t" + nachricht);
+							}
+							break;
+						case "switchRoom":
+							String raumName = message.optString("message", "");
 
-					    String nachricht = message.optString("message","");
+							if (!raumName.equals("")) {
+								Raum neuerRaum = server2.getRaum(raumName);
 
-					    if (!nachricht.equals("")) {
-                            sendToRoom(name + ":\t" + nachricht);
-                        }
+								if (neuerRaum != null) {
+									switchRoom(neuerRaum);
+								} else {
+									send(
+											new JSONObject()
+													.put("type","message")
+													.put("message","Raum existiert nicht")
+													.put("status","ok")
+													.toString());
+								}
 
-					} else if (type.equals("changeroom")) {
+							}
+							break;
+							case "logout":
+								System.out.println(name + " hat seine Verbindung abgebrochen");
+								sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
 
+								if ( client != null ) {
+									try {
+										raum.removeUser(name);
+										server2.removeNutzer(this);
+										client.close();
+										//Server2.getRaumListe().remove(name); wtf's this supposed to do?!
+									} catch (IOException e) {
 
-					    String raumName = message.optString("message", "");
+									}
+								}
 
-					    if (!raumName.equals("")) {
-                            Raum neuerRaum = server2.getRaum(raumName);
+								break;
+								case "":break;
+								default:
+									server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
+									break;
 
-                            if (neuerRaum != null) {
-                                send(
-                                        new JSONObject()
-                                                .put("type","message")
-                                                .put("message","Raum zu " + raumName + " gewechselt!")
-                                                .put("status","ok")
-                                                .toString()
-                                );
-                                raum.removeUser(name);
-                                raum = neuerRaum;
-                                raum.addUser(name);
-                            } else {
-                                send(
-                                        new JSONObject()
-                                                .put("type","message")
-                                                .put("message","Raum existiert nicht")
-                                                .put("status","ok")
-                                                .toString());
-                            }
-
-                        }
-
-					} else if (type.equals("logout")) {
-
-                        System.out.println(name + " hat seine Verbindung abgebrochen");
-                        sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
-
-                        if ( client != null ) {
-                            try {
-                                raum.removeUser(name);
-                                server2.removeNutzer(this);
-                                client.close();
-                                //Server2.getRaumListe().remove(name); wtf's this supposed to do?!
-                            } catch (IOException e) {
-
-                            }
-                        }
-
-                        break;
-
-					} else {
-						//unknown type
 					}
 
 				}
