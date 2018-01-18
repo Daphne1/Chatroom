@@ -96,6 +96,7 @@
               <component id="13e39" class="javax.swing.JTextArea" binding="clientLog">
                 <constraints/>
                 <properties>
+                  <editable value="false"/>
                   <lineWrap value="true"/>
                   <text value=""/>
                   <wrapStyleWord value="true"/>

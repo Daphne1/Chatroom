@@ -26,6 +26,9 @@ public class Client {
     private JPanel Raeume;
     private JTextArea clientLog;
 
+    private JPopupMenu popupMenuRoom = new JPopupMenu();
+    private JMenuItem switchRoom;
+
 	private Socket server;
 	private PrintWriter printWriterOutputStream;
     BufferedReader bufferedReaderInputStream;
@@ -63,7 +66,7 @@ public class Client {
             appendMessage("Error connecting to host.");
         }
 
-		sendButton.addActionListener(new ActionListener() {
+        sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 /*
@@ -129,6 +132,13 @@ public class Client {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 eingabe();
+            }
+        });
+        popupMenuRoom.add(switchRoom = new JMenuItem("Raum wechseln"));
+        switchRoom.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                switchRoom();
             }
         });
 	}
@@ -201,6 +211,7 @@ public class Client {
 
 
 	public void senden(String message) {
+	    appendMessage("ich sende: "+message);
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
 	}
@@ -244,5 +255,14 @@ public class Client {
         }
         userlist.setModel(listUser);
         roomlist.setModel(listRooms);
+    }
+    private void switchRoom(){
+        JSONObject request = new JSONObject();
+        String message = roomlist.getSelectedValue();
+        request
+                .put("type", "message")
+                .put("message", message);
+
+        senden(request.toString());
     }
 }
