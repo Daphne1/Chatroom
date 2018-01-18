@@ -311,7 +311,6 @@ public class Server2 {
 	protected void newRoom (String name) {
 		if (!raumListe.containsKey(name) && !name.equals("Lobby")) {
 			raumListe.put(name, new Raum(name));
-			log("Raum: \""+ name + "\" wurde erstellt ");
 			updateAllLists();
 		}
 	}
@@ -322,7 +321,6 @@ public class Server2 {
 			newRoom(newName);
 			raumListe.get(newName).setNutzerList(raumListe.get(room.getName()).getNutzerList());
 			deleteRoom(room);
-			log("\""+room.getName()+"\" wurde zu \""+ newName + "\" umbenannt");
 			updateAllLists();
 		}
 	}
@@ -333,7 +331,6 @@ public class Server2 {
 	    		nutzerListe.get(s).switchRoom(raumListe.get("Lobby"));
 			}
 			raumListe.remove(room.getName());
-			log("Raum: \""+ room.getName() + "\" wurde gelöscht");
 			updateAllLists();
 
 		}

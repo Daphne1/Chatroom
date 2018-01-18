@@ -35,22 +35,25 @@ public class ServerLayout {
             public void actionPerformed(ActionEvent actionEvent) {
                 response.setText("");
                 System.out.println(chooseAction.getSelectedItem());
+                Raum r = (Raum) roomList.getSelectedValue();
                 switch ((String) chooseAction.getSelectedItem()) {
 
                     case "Raum umbenennen":
-                        if (roomList.getSelectedValue() != null) {
+                        if (r != null) {
                             String newName = actionInformation.getText();
                             if (!newName.equals("Lobby") && !chooseAction.getSelectedItem().equals(server2.getRaumListeHashMap().get("Lobby"))) {
-                                response.setText(roomList.getSelectedValue().toString() + "wurde in '" + newName + "' umbenannt.");
-                                server2.editRoom((Raum) roomList.getSelectedValue(), actionInformation.getText());
+                                server2.editRoom(r, newName);
+                                response.setText(r.getName() + "wurde in '" + newName + "' umbenannt.");
+                                server2.log("\""+r.getName()+"\" wurde zu \""+ newName + "\" umbenannt");
                             }
                         }
                         break;
                     case "Raum löschen":
-                        if (roomList.getSelectedValue() != null) {
-                            if (!((Raum) roomList.getSelectedValue()).getName().equals("Lobby")) {
-                                response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
-                                server2.deleteRoom((Raum) roomList.getSelectedValue());
+                        if (r != null) {
+                            if (!r.getName().equals("Lobby")) {
+                                server2.deleteRoom(r);
+                                response.setText("Raum " + r.getName() + " wurde gelöscht.");
+                                server2.log("Raum: \""+ r.getName() + "\" wurde gelöscht");
                             }
                         }
                         break;
@@ -59,6 +62,7 @@ public class ServerLayout {
                         if (!name.equals("Lobby")) {
                             server2.newRoom(name);
                             response.setText("Raum '" + actionInformation.getText() + "' wurde erstellt.");
+                            server2.log("Raum: \""+ name + "\" wurde erstellt ");
                         }
                         break;
                     case "Benutzer verwarnen":
