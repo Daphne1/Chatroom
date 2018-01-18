@@ -69,24 +69,28 @@ public class ServerLayout {
                         if (userList.getSelectedValue() != null) {
                             server2.warnUser((ClientThread) userList.getSelectedValue());
                             response.setText("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
+                            server2.log("Benutzer " + userList.getSelectedValue() + " wurde verwarnt.");
                         }
                         break;
                     case "Benutzer kicken":
                         if (userList.getSelectedValue() != null) {
                             response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
                             server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                            server2.log("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
                         }
                         break;
                     case "Benutzer ausschließen":
                         if (userList.getSelectedValue() != null) {
                             response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
                             server2.banUser(((ClientThread) userList.getSelectedValue()).getUserName());
+                            server2.log("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
                         }
                         break;
                     case "Server umbennen":
                         String newServerName = actionInformation.getText();
                         server2.editServername(newServerName);
                         response.setText("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
+                        server2.log("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
                         break;
                     case "Passwortdatei lesen":
                         server2.loadUserData();
