@@ -31,6 +31,10 @@ public class Raum {
 		return nutzer;
 	}
 
+	public void setNutzerList(LinkedList<String> nutzer) {
+		this.nutzer = nutzer;
+	}
+
 	@Override
 	public String toString() {
 		return name + " (" + getNumberOfPersons() + " Benutzer)";

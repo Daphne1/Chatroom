@@ -235,8 +235,6 @@ public class Client {
 	public static void main(String args[]) {
 		Client C = new Client();
 		C.startClient();
-
-		System.out.println("programm ende");
 	}
 
 	private boolean startClient() {

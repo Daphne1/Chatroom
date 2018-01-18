@@ -299,16 +299,21 @@ public class Server2 {
 	}
 
 	protected void editRoom (Raum room, String newName) {
-		if (!raumListe.containsKey(newName) && !newName.equals("Lobby")) {
-			room.setName(newName);
-			// auch String ändern
-            // Fehler: Füllerfeder=hjhlk (0 Benutzer)
+		if (!raumListe.containsKey(newName) && !newName.equals("Lobby") && !room.equals(raumListe.get("Lobby"))) {
+
+			newRoom(newName);
+			raumListe.get(newName).setNutzerList(raumListe.get(room.getName()).getNutzerList());
+			deleteRoom(room);
+
 			updateAllLists();
 		}
 	}
 
 	protected void deleteRoom (Raum room) {
 	    if (!room.getName().equals("Lobby")) {
+	    	for (String s : room.getNutzerList()) {
+	    		nutzerListe.get(s).switchRoom(raumListe.get("Lobby"));
+			}
 			raumListe.remove(room.getName());
 			updateAllLists();
 			System.out.println("Raumliste: " + raumListe);

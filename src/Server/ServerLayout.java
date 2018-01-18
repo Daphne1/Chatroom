@@ -39,14 +39,16 @@ public class ServerLayout {
 
                     case "Raum umbenennen":
                         String newName = actionInformation.getText();
-                        if (!newName.equals("Lobby")) {
+                        if (!newName.equals("Lobby") && !chooseAction.getSelectedItem().equals(server2.getRaumListeHashMap().get("Lobby"))) {
                             response.setText(roomList.getSelectedValue().toString() + "wurde in '" + newName + "' umbenannt.");
                             server2.editRoom((Raum) roomList.getSelectedValue(), actionInformation.getText());
                         }
                         break;
                     case "Raum löschen":
-                        response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
-                        server2.deleteRoom((Raum) roomList.getSelectedValue());
+                        if(!((Raum) roomList.getSelectedValue()).getName().equals("Lobby")) {
+                            response.setText("Raum " + roomList.getSelectedValue().toString() + " wurde gelöscht.");
+                            server2.deleteRoom((Raum) roomList.getSelectedValue());
+                        }
                         break;
                     case "Raum erstellen":
                         String name = actionInformation.getText();
