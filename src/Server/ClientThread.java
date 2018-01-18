@@ -78,7 +78,12 @@ class ClientThread extends Thread {
 	String accept() {
 		try { 
 			String input = this.input.readLine();
-			server2.log(input);
+			if (input == null){
+				server2.log("null emfangen");
+				closeClientThread();
+			}else{
+				server2.log(input);
+			}
 			return input;
 		} catch (IOException e) {
 			server2.log("<ClientThread> accept funtioniert nicht");
@@ -210,17 +215,15 @@ class ClientThread extends Thread {
 	}
 
 	private void closeClientThread(){
-		if ( client != null ) {
-			try {
-				server2.removeNutzer(this);
-				raum.removeUser(name);
+    	server2.log(name + " hat den Server verlassen");
+		server2.removeNutzer(this);
+		raum.removeUser(name);
+		try {
 				client.close();
-				//Server2.getRaumListe().remove(name); wtf's this supposed to do?!
-			} catch (IOException e) {
-
+		} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-	}
 
 	private void loop(){
 		String in = accept();
@@ -238,6 +241,7 @@ class ClientThread extends Thread {
 
 		if (message == null) {
 			//handle malformed message
+			closeClientThread();
 		} else {
 
 			//TODO switch each type

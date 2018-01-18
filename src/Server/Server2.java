@@ -134,8 +134,10 @@ public class Server2 {
 	}
 
 	public void removeNutzer(ClientThread name) {
-	    // nutzerListe.remove(name);
-		nutzerListe.remove(name.getName());
+		log("1: "+nutzerListe.toString());
+		//nutzerListe.remove(name);
+		nutzerListe.remove(name.getUserName());
+		log("2: "+nutzerListe.toString());
 		updateAllLists();
 	}
 
