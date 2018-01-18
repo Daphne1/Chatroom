@@ -49,7 +49,6 @@ class empfangenThread extends Thread {
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
-				client.appendMessage("ankommende Nachricht: "+ankommendeNachricht);
 
 				JSONObject json = null;
 				String type = "";
@@ -79,11 +78,11 @@ class empfangenThread extends Thread {
 
 					} else if (type.equals("raeume")) {
 
-						client.addRooms(json.optJSONArray("message"));
+						client.updateRooms(json.optJSONArray("message"));
 
 					} else if (type.equals("nutzer")) {
 
-						client.addUsers(json.optJSONArray("message"));
+						client.updateUser(json.optJSONArray("message"));
 
 					} else if (type.equals("login")) {
 
@@ -97,7 +96,7 @@ class empfangenThread extends Thread {
 						}
 
 					}
-					else {//Johannes DBUG falls ein normaler String kommt
+					else {
 						client.appendMessage(ankommendeNachricht);
 					}
 				}

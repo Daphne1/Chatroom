@@ -202,22 +202,18 @@ public class Server2 {
 						System.out.println("Array: " + usersarray);
 
 						if (usersarray != null) {
-							System.out.println("4");
 
 							for (int i = 0; i < usersarray.length(); i++) {
-								System.out.println("5");
 								JSONObject user = usersarray.optJSONObject(i);
 								System.out.println("User: " + user);
 
 								if (user != null) {
-									System.out.println("6");
 
 									String username = user.optString("user", "");
 									String password = user.optString("password","");
                                     Boolean banned = user.optBoolean("banned",false);
 
 									if (!username.equals("") && !password.equals("")) {
-										System.out.println("7");
 										passwords.put(
 										        username,
                                                 new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
@@ -294,6 +290,14 @@ public class Server2 {
 
 	}
 	protected void log(String message) {
+
+		try {
+			BufferedWriter output = new BufferedWriter(new FileWriter("verlauf.txt", true));
+			output.append(message + "\n");
+			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		GUI.appendLog(message);
 		System.out.println(message);
 	}

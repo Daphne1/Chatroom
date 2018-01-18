@@ -92,8 +92,6 @@ class ClientThread extends Thread {
 			if (input == null){
 				server2.log("null emfangen");
 				closeClientThread();
-			}else{
-				server2.log(input);
 			}
 			return input;
 		} catch (IOException e) {
@@ -149,7 +147,7 @@ class ClientThread extends Thread {
 			String passwort = json.optString("message", "");
 
 
-
+			// noch nie angemeldet
 			if (!server2.userExists(name)) {
 				server2.createUser(name, passwort);
 
@@ -158,8 +156,10 @@ class ClientThread extends Thread {
 
 				server2.log("Neuer Account registriert: " + name);
 			}
+			// Passwort richtig
 			if (checkPassword(passwort)) {
-				// prüfen ob der user schon angemeldet ist
+
+				// Nutzer bereits angemeldet ist
 				if (server2.nutzerlisteContainsUser(name)){
 					server2.log(name + " versucht sich anzumelden, obwohl er schon angemeldet ist");
 					request
@@ -169,7 +169,7 @@ class ClientThread extends Thread {
 					login();
 				}
 
-				// prüfen ob der user gebannt ist
+				// Nutzer ist gebannt --> kann sich nicht mehr einloggen
 				if (server2.isbanned(name)){
 					server2.log(name + " versucht sich anzumelden, obwohl er gebannt ist");
 					request
@@ -179,11 +179,15 @@ class ClientThread extends Thread {
 					login();
 				}
 
-				request.put("message", "Du bist eingeloggt.\nZum Ausloggen schreibe '/abmelden'.");
+				// Nutzer weder gebannt noch bereits angemeldet
+				// --> Anmeldung möglich
+				request.put("message", "Du bist eingeloggt.");
 				send(request.toString());
 
 				server2.log(name + " ist jetzt angemeldet");
 				break;
+
+			// Passwort falsch
 			} else {
 				request.put("message", "Dein Passwort wird nicht angenommen. Bitte versuche es noch einmal.");
 				send(request.toString());
@@ -192,6 +196,7 @@ class ClientThread extends Thread {
 	}
 
     public void run(){
+
 		// Bearbeitung einer aufgebauten Verbindung
 		server2.log("ClientThread läuft");
 
@@ -201,14 +206,12 @@ class ClientThread extends Thread {
 		raum.addUser(name);
 		server2.insertNutzer(name, this);
 
-		updateLists();
-
 		sendToRoom(name + " hat sich eingeloggt.");
 
 		while(valid) {
             loop();
         }
-		server2.log("schleife beendet"); //DEBUG
+
 	}
 
 	private void closeClientThread(){
@@ -222,7 +225,6 @@ class ClientThread extends Thread {
 			}
 		}
 
-		// TODO in log: alles über append in verlauf.txt einschreiben
 	private void loop(){
 		String in = accept();
 

@@ -23,30 +23,30 @@ public class Client {
 	private JButton sendButton;
 	private JTabbedPane tabbedPane1;
 	private JList<String> userlist;
-	private JList<String> roomlist;
+    private JList<String> roomlist;
+    private JTextArea clientLog;
     private JPanel Benutzer;
     private JPanel Raeume;
-    private JTextArea clientLog;
 
     private JPopupMenu popupMenuRoom = new JPopupMenu();
     private JMenuItem switchRoom;
 
-	private Socket server;
-	private PrintWriter printWriterOutputStream;
+    private Socket server;
+    private PrintWriter printWriterOutputStream;
     BufferedReader bufferedReaderInputStream;
 
-    private boolean enteredUser = false;
-	private boolean enteredPassword = false;
-	private boolean loginConfirmed = false;
-	private String user;
-	private String pw;
-	private boolean started;
+    private boolean loginConfirmed = false;
 
-	//ROOMNAME, STRING
-	private HashMap<String, String> RoomTexts;
     private DefaultListModel listUser = new DefaultListModel();
     private DefaultListModel listRooms = new DefaultListModel();
 
+    //ROOMNAME, STRING
+    private HashMap<String, String> RoomTexts;
+    private String user;
+    private String pw;
+//    private boolean started;
+    private boolean enteredUser = false;
+    private boolean enteredPassword = false;
 
 	public Client() {
 
@@ -71,62 +71,8 @@ public class Client {
         sendButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-/*
-                //anfang senfo login
-				if (!enteredUser) {
-					user = inputField.getText();
-					enteredUser = true;
-				} else if (!enteredPassword) {
-					pw = inputField.getText();
-					enteredPassword = true;
 
-                    JSONObject loginrequest = new JSONObject()
-                            .put("type","login")
-                            .put("user",user)
-                            .put("password",pw);
-
-                    senden(loginrequest.toString());
-
-				} else if (loginConfirmed) {
-
-                    String message = inputField.getText();
-                    appendMessage(message);
-
-                    JSONObject request = new JSONObject();
-
-                    if (message.startsWith("/")) {
-
-                        //command
-                        if (message.startsWith("/abmelden")) {
-
-                            request
-                                    .put("type", "logout")
-                                    .put("message", "");
-
-                        } else if (message.startsWith("/changeroom")) {
-                            int indexfirstspace = message.indexOf(' ');
-                            String param = message.substring(indexfirstspace + 1);
-
-                            request
-                                    .put("type", "changeroom")
-                                    .put("message", param);
-
-                        }
-
-                    } else {
-
-                        //normal message
-                        request
-                                .put("type", "message")
-                                .put("message", message);
-                    }
-                    senden(request.toString());
-                    inputField.setText("");
-                }
-                //ende senfo login
-                */
-            eingabe();
-
+                eingabe();
 
             }
 		});
@@ -190,11 +136,7 @@ public class Client {
 	    appendMessage(error);
     }
 
-    boolean isLoginConfirmed() {
-	    return loginConfirmed;
-    }
-
-    void addUsers(JSONArray array) {
+    void updateUser(JSONArray array) {
 
         if (array != null) {
 
@@ -209,7 +151,7 @@ public class Client {
 
     }
 
-    void addRooms(JSONArray array) {
+    void updateRooms(JSONArray array) {
 
         if (array != null) {
 
@@ -226,12 +168,13 @@ public class Client {
 
 
 	public void senden(String message) {
-	    appendMessage("ich sende: "+message);
+
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
+
 	}
 
-	
+
 	public static void main(String args[]) {
 		Client C = new Client();
 		C.startClient();
@@ -257,18 +200,8 @@ public class Client {
 	}
 
 
-    protected void updateLists (String[] user, String[] rooms) {
-	    listUser.clear();
-        listRooms.clear();
-        for(String s : user) {
-            listUser.addElement(s);
-        }
-        for(String s : rooms) {
-            listRooms.addElement(s);
-        }
-        userlist.setModel(listUser);
-        roomlist.setModel(listRooms);
-    }
+
+
     private void switchRoom(){
         JSONObject request = new JSONObject();
         String message = roomlist.getSelectedValue();
@@ -277,5 +210,64 @@ public class Client {
                 .put("message", message);
 
         senden(request.toString());
+    }
+
+    private void alternativeLogin() {
+
+        if (!enteredUser) {
+            user = inputField.getText();
+            enteredUser = true;
+        } else if (!enteredPassword) {
+            pw = inputField.getText();
+            enteredPassword = true;
+
+            JSONObject loginrequest = new JSONObject()
+                    .put("type","login")
+                    .put("user",user)
+                    .put("password",pw);
+
+            senden(loginrequest.toString());
+
+        } else if (loginConfirmed) {
+
+            String message = inputField.getText();
+            appendMessage(message);
+
+            JSONObject request = new JSONObject();
+
+            if (message.startsWith("/")) {
+
+                //command
+                if (message.startsWith("/abmelden")) {
+
+                    request
+                            .put("type", "logout")
+                            .put("message", "");
+
+                } else if (message.startsWith("/changeroom")) {
+                    int indexfirstspace = message.indexOf(' ');
+                    String param = message.substring(indexfirstspace + 1);
+
+                    request
+                            .put("type", "changeroom")
+                            .put("message", param);
+
+                }
+
+            } else {
+
+                //normal message
+                request
+                        .put("type", "message")
+                        .put("message", message);
+            }
+            senden(request.toString());
+            inputField.setText("");
+        }
+    }
+
+
+    boolean isLoginConfirmed() {
+        return loginConfirmed;
     }
 }

@@ -14,15 +14,9 @@ public class ServerLayout {
     private JButton button1;
     private JTextArea LogDisplay;
     private JPanel ROOT;
-    private JLabel name;
     private JLabel response;
-    private JTextField actionInformation;
-    private JMenuBar bar;
-    private JMenu Server;
-    private JMenu Benutzer;
-    private JMenu Raum;
-    private JMenu Operationen;
 
+    private JTextField actionInformation;
     DefaultListModel user = new DefaultListModel();
     DefaultListModel rooms = new DefaultListModel();
 
