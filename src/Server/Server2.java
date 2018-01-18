@@ -129,13 +129,13 @@ public class Server2 {
 
 	public void insertNutzer(String name, ClientThread thread) {
 		nutzerListe.put(name, thread);
-		updateAllLists(nutzerListe, raumListe);
-		GUI.setName("Lobby");
+		updateAllLists();
+		GUI.setServerlogInfo("Lobby");
 	}
 
 	public void removeNutzer(ClientThread name) {
 		nutzerListe.remove(name);
-		updateAllLists(nutzerListe, raumListe);
+		updateAllLists();
 	}
 
 	private void saveUserData() {

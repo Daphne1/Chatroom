@@ -30,6 +30,10 @@ class ClientThread extends Thread {
 		this.server2 = server2;
 	}
 
+    protected String getUserName() {
+        return name;
+    }
+
     protected void switchRoom (Raum neuerRaum) {
         server2.log(name + " wechselt vom Raum " + raum + " zu " + neuerRaum);
         sendToRoom(name + " hat zum Raum '" + neuerRaum.getName() + "' gewechselt.");
@@ -151,46 +155,14 @@ class ClientThread extends Thread {
 
             login();
 
+
             raum = server2.getRaum("Lobby");
             raum.addUser(name);
             server2.insertNutzer(name, this);//Johannes
 
 //TODO eigene methoden
 
-            ////////////////////////////////////
-            //Sende nutzerliste zum nutzer
-            //-> Funktion
-
-			// send("\nAktuelle Nutzer:");
-			JSONArray onlineListe = new JSONArray();
-			for (String _x : raum.getNutzerList()) {
-				onlineListe.put(_x);
-			}
-
-			JSONObject nutzer = new JSONObject()
-                    .put("type","nutzer")
-                    .put("message",onlineListe)
-                    .put("status","ok");
-
-			send(nutzer.toString());
-            ////////////////////////////////////
-
-
-            ////////////////////////////////////
-			//sende Raumlist zum User
-            //-> Funktion
-            JSONArray raumListe = new JSONArray();
-            for (String _x : server2.getRaumListe()) {
-                raumListe.put(_x);
-            }
-
-            JSONObject raeume = new JSONObject()
-                    .put("type","raeume")
-                    .put("message",raumListe)
-                    .put("status","ok");
-
-            send(raeume.toString());
-            ////////////////////////////////////
+            updateLists();
 
 //TODO name vorher setzen
 			sendToRoom(name + " hat sich eingeloggt.");
@@ -295,4 +267,47 @@ class ClientThread extends Thread {
 
 		}
 	}
+
+	protected void updateLists() {
+        ////////////////////////////////////
+        //Sende nutzerliste zum nutzer
+        //-> Funktion
+
+        // send("\nAktuelle Nutzer:");
+        JSONArray onlineListe = new JSONArray();
+        for (String _x : raum.getNutzerList()) {
+            onlineListe.put(_x);
+        }
+
+            /*TODO wenn du deinen alten eigenen code benutzen möchtest:
+            *anstatt der while schleife die Methode login() verwenden
+            * (habe es nur aus dem alten code in eine eigene methode kopiert)
+            * */
+
+
+        JSONObject nutzer = new JSONObject()
+                .put("type","nutzer")
+                .put("message",onlineListe)
+                .put("status","ok");
+
+        send(nutzer.toString());
+        ////////////////////////////////////
+
+
+        ////////////////////////////////////
+        //sende Raumlist zum User
+        //-> Funktion
+        JSONArray raumListe = new JSONArray();
+        for (String _x : server2.getRaumListe()) {
+            raumListe.put(_x);
+        }
+
+        JSONObject raeume = new JSONObject()
+                .put("type","raeume")
+                .put("message",raumListe)
+                .put("status","ok");
+
+        send(raeume.toString());
+        ////////////////////////////////////
+    }
 }

@@ -59,11 +59,12 @@ public class ServerLayout {
                         break;
                     case "Benutzer kicken":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                        server2.kickUser((ClientThread) userList.getSelectedValue());
+                        server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
                         updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
                         break;
                     case "Benutzer ausschließen":
                         response.setText("Benutzer " + userList.getSelectedValue() + " wurde gebannt und ist ab sofort von dem Server2 ausgeschlossen.");
+                        server2.banUser(((ClientThread) userList.getSelectedValue()).getUserName());
                         updateLists(server2.getNutzerListeHashMap(), server2.getRaumListeHashMap());
 //                        TODO s.bannUser((ClientThread) userList.getSelectedValue());
                         break;
@@ -82,52 +83,38 @@ public class ServerLayout {
     }
 
     public void start_gui() {
+
         JFrame frame = new JFrame("ServerLayout");
         frame.setContentPane(this.ROOT);
-/*
-        bar = new JMenuBar();
-        Server2 = new JMenu("Server2");
-        Benutzer = new JMenu("Benutzer");
-        Raum = new JMenu("Server2.Raum");
-        Operationen = new JMenu("Operationen");
-
-        fileNew = new JMenuItem("Server2 umbenennen");
-
-        //frame.add(bar, new BorderLayout().PAGE_START);
-        bar.add(Server2);
-        bar.add(Benutzer);
-        bar.add(Raum);
-        bar.add(Operationen);
-
-        Server2.Server2.add(fileNew);
-*/
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
     }
 
 
     protected void appendLog (String message) {
+
         LogDisplay.append(message + "\n");
         LogDisplay.setCaretPosition(LogDisplay.getDocument().getLength());
+
     }
 
     protected void updateLists (HashMap<String, ClientThread> userlist, HashMap<String, Raum> roomlist) {
+
         user.clear();
         rooms.clear();
+
         for(String key : userlist.keySet()) {
             user.addElement(userlist.get(key));
         }
         for(String key : roomlist.keySet()) {
             rooms.addElement(roomlist.get(key));
         }
+
         userList.setModel(user);
         roomList.setModel(rooms);
-    }
 
-    public void setName(String s) {
-        //name.setText(s);      //TODO das label scheint nicht zu existieren
     }
 
     public void setServerlogInfo(String serverName) {
