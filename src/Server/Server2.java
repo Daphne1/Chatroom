@@ -15,12 +15,7 @@ import java.util.Set;
 //SINGLETON
 public class Server2 {
 
-	private static final int PORT = 3456;
-	private static Server2 INSTANCE = new Server2();
-
-	public static synchronized Server2 getInstance() {
-		return INSTANCE;
-	}
+	private final int PORT = 3456;
 
 	String serverName = "PseudoSportProgram";
 
@@ -282,8 +277,7 @@ public class Server2 {
     public static void main(String[] args) throws IOException {
 
 	    //init the server
-	    Server2.getInstance();
-
+		new Server2();
 
 	}
 	protected void log(String message) {
