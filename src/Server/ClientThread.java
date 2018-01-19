@@ -60,7 +60,7 @@ class ClientThread extends Thread {
 	}
 
 
-	public boolean checkPassword (String passwort) {
+    protected boolean checkPassword (String passwort) {
 		return server2.checkUserPassword(name,passwort);
 	}
 

@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
-/**
- * Created by Senfo on 10.01.2018.
- */ // ein Thread dient dem Empfangen
+
 class empfangenThread extends Thread {
 
     // dazu muss der Socket und der BufferedReader übergeben werden
@@ -24,8 +22,6 @@ class empfangenThread extends Thread {
 		this.client = client;
 	}
 
-	// Nachrichten koennen vom Server2.Server2 entgegengenommen werden
-	// falls sie nicht angenommen werden kann, wird eine Fehlermeldung mit Fehlerursache ausgegeben
 	private String annehmen() {
 		try {
 
@@ -44,8 +40,7 @@ class empfangenThread extends Thread {
 	}
 
 	public void run(){
-		// empfängt die Nachrichten vom Server2.Server2 über die Methode annehmen()
-		// gibt diese aus, solange der Server2.Server2 läuft
+
 		while(true) {
 			String ankommendeNachricht = annehmen();
 			if (ankommendeNachricht != null) {
@@ -59,22 +54,17 @@ class empfangenThread extends Thread {
 
 					type = json.optString("type","");
 				} catch (JSONException e) {
-					//malformed data couldnt parse JSON
+
 				}
 
 				if (json != null) {
-					//TODO switch case
+
 					if (type.equals("message")) {
 
-//						if (client.isLoginConfirmed()) {
-						if (true) {
 							String nachricht = json.optString("message", "");
 
 							if (!nachricht.equals(""))
 							    client.appendMessage(nachricht);
-						} else {
-							//no accepted message til logged in
-						}
 
 					} else if (type.equals("raeume")) {
 
@@ -103,7 +93,7 @@ class empfangenThread extends Thread {
 
 			} else {
 				//connection broke
-				client.appendMessage("verbindung verloren! beende das Programm");
+				client.appendMessage("Verbindung verloren! Beende das Programm.");
 				System.exit(0);
 			}
 		}

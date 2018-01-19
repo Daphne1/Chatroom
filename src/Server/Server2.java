@@ -17,32 +17,28 @@ public class Server2 {
 
 	private final int PORT = 3456;
 
-	String serverName = "PseudoSportProgram";
+	private String serverName = "PseudoSportProgram";
 
 	private ServerSocket socket;
 
-	//username - clientthread
+	// userName - ClientThread
 	private HashMap<String, ClientThread> nutzerListe;
 
-	//roomname - room
+	// roomName - Raum
 	private HashMap<String, Raum> raumListe;
 
 
 	private ServerLayout GUI;
 
-	//  User - Password
+	// user - password
 	private HashMap<String, Map.Entry<String, Boolean>> passwords;
 
 
 	private Server2() {
 
-
-		//init lookups
 		this.raumListe = new HashMap<>();
 		this.nutzerListe = new HashMap<>();
 		this.passwords = new HashMap<>();
-
-		//read passwords, but don't show
 
 		try {
 			GUI = new ServerLayout(this);
@@ -71,9 +67,7 @@ public class Server2 {
 	}
 
 
-	//passwords need a lock
-
-    public boolean checkUserPassword(String user, String password) {
+    protected boolean checkUserPassword(String user, String password) {
 		if (passwords.containsKey(user)) {
 			//password match
 			return passwords.get(user).getKey().equals(password);
@@ -81,11 +75,12 @@ public class Server2 {
 			return false;
 		}
 	}
-	public boolean userExists(String user) {
+
+    protected boolean userExists(String user) {
 		return passwords.containsKey(user);
 	}
 
-	public void createUser(String user, String password) {
+    protected void createUser(String user, String password) {
 		passwords.put(user, new AbstractMap.SimpleEntry<String, Boolean>(password, false));
 
 		//save passwords
@@ -93,23 +88,27 @@ public class Server2 {
 	}
 
 
-    //raumliste needs a lock
-    public Set<String> getRaumListe() {
+    protected Set<String> getRaumListe() {
 		return raumListe.keySet();
 	}
 
     protected HashMap getRaumListeHashMap() {
-		return nutzerListe;
-	}
-	public Raum getRaum(String name) {
-		return raumListe.containsKey(name) ? raumListe.get(name) : null;
+		return raumListe;
 	}
 
-	protected HashMap getNutzerListeHashMap() {
+	protected Raum getRaum(String name) {
+        return raumListe.containsKey(name) ? raumListe.get(name) : null;
+    }
+
+    protected HashMap getNutzerListeHashMap() {
 		return nutzerListe;
 	}
 
-	public void insertNutzer(String name, ClientThread thread) {
+    public String getServerName() {
+        return serverName;
+    }
+
+    protected void insertNutzer(String name, ClientThread thread) {
 
 		nutzerListe.put(name, thread);
 		updateAllLists();
@@ -117,7 +116,7 @@ public class Server2 {
 
 	}
 
-	public void removeNutzer(ClientThread name) {
+    protected void removeNutzer(ClientThread name) {
 
 		nutzerListe.remove(name.getUserName());
 		updateAllLists();
@@ -125,8 +124,6 @@ public class Server2 {
 	}
 
 	private void saveUserData() {
-
-//		FileOutputStream out = null;
 
 		try {
 
@@ -243,13 +240,13 @@ public class Server2 {
 
 	}
 
-	public void sendToUser (String nutzer, String message) {
+    protected void sendToUser (String nutzer, String message) {
 
 	    nutzerListe.get(nutzer).send(message);
 
     }
 
-    public void banUser(String user) {
+    protected void banUser(String user) {
 
 	    if (passwords.containsKey(user)) {
 
@@ -269,7 +266,7 @@ public class Server2 {
 			return passwords.get(user).getValue();
 	}
 
-    public void kickUser(String user) {
+    protected void kickUser(String user) {
 
 	    if (nutzerListe.containsKey(user))
 	        nutzerListe.get(user).kick();
@@ -364,16 +361,16 @@ public class Server2 {
 
 
 
-    public HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
+    protected HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
         return passwords;
     }
 
-    public boolean isBanned(String user) {
+    protected boolean isBanned(String user) {
         return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
     }
 
     //nutzerliste needs a lock
-    public Set<String> getNutzerListe() {
+    protected Set<String> getNutzerListe() {
         return nutzerListe.keySet();
     }
 
@@ -390,7 +387,7 @@ public class Server2 {
         return temp;
     }
 
-    public void end() {
+    protected void end() {
         try {
             socket.close();
         } catch (IOException e) {}

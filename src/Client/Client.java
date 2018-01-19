@@ -48,7 +48,7 @@ public class Client {
     private boolean enteredUser = false;
     private boolean enteredPassword = false;
 
-	public Client() {
+    protected Client() {
 
         try {
             server = new Socket("localhost", 3456);
@@ -124,11 +124,11 @@ public class Client {
         clientFrame.setVisible(true);
     }
 
-    public void confirmLogin() {
+    protected void confirmLogin() {
 	    loginConfirmed = true;
     }
 
-    public void resetLogin(String error) {
+    protected void resetLogin(String error) {
 	    loginConfirmed = false;
 	    enteredPassword = false;
 	    enteredUser = false;
@@ -167,7 +167,7 @@ public class Client {
     }
 
 
-	public void senden(String message) {
+    protected void senden(String message) {
 
 		printWriterOutputStream.println(message);
 		printWriterOutputStream.flush();
@@ -175,7 +175,7 @@ public class Client {
 	}
 
 
-	public static void main(String args[]) {
+    public static void main(String args[]) {
 		Client C = new Client();
 		C.startClient();
 	}

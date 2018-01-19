@@ -20,7 +20,7 @@ public class ServerLayout {
     DefaultListModel user = new DefaultListModel();
     DefaultListModel rooms = new DefaultListModel();
 
-    private static ServerLayout INSTANCE;
+//    private static ServerLayout INSTANCE;
 
     ServerLayout(Server2 server2) {
 
@@ -83,8 +83,8 @@ public class ServerLayout {
                     case "Server umbennen":
                         String newServerName = actionInformation.getText();
                         server2.editServername(newServerName);
-                        response.setText("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
-                        server2.log("Der Server '" + server2.serverName + "' wurde in " + newServerName + "umbenannt.");
+                        response.setText("Der Server '" + server2.getServerName() + "' wurde in " + newServerName + "umbenannt.");
+                        server2.log("Der Server '" + server2.getServerName() + "' wurde in " + newServerName + "umbenannt.");
                         break;
                     case "Passwortdatei lesen":
                         server2.loadUserData();
@@ -95,7 +95,7 @@ public class ServerLayout {
         });
     }
 
-    public void start_gui() {
+    protected void start_gui() {
 
         JFrame frame = new JFrame("ServerLayout");
         frame.setContentPane(this.ROOT);
@@ -132,7 +132,7 @@ public class ServerLayout {
 
     }
 
-    public void setServerlogInfo(String serverName) {
+    protected void setServerlogInfo(String serverName) {
         serverlogInfo.setText("Server2 '" + serverName + "' ist online.");
     }
 

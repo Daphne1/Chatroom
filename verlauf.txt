@@ -1,22 +1,50 @@
 Server hat gestartet.
 ClientThread läuft
 ein neuer Client möchte sich anmelden
-Bob versucht sich anzumelden 
-Bob ist jetzt angemeldet
-null emfangen
-Bob hat den Server verlassen
-1: {Bob=[Lobby] Bob}
-2: {}
-ClientThread läuft
-ein neuer Client möchte sich anmelden
-Robert versucht sich anzumelden 
-ein neuer Client möchte sich anmelden
-Bob versucht sich anzumelden 
-Bob ist jetzt angemeldet
-Bob wechselt vom Raum Lobby (1 Benutzer) zu Füllerfeder (0 Benutzer)
-Bob wechselt vom Raum Füllerfeder (1 Benutzer) zu Lobby (0 Benutzer)
-"Füllerfeder" wurde zu "hund" umbenannt
-null emfangen
-Bob hat den Server verlassen
-1: {Bob=[Lobby] Bob}
-2: {}
+Anne versucht sich anzumelden 
+Neuer Account registriert: Anne
+Anne ist jetzt angemeldet
+[Lobby] Anne hat sich eingeloggt.
+[Lobby] Anne:	Hallo
+Anne wechselt vom Raum Lobby (1 Benutzer) zu Füllerfeder (0 Benutzer)
+[Lobby] Anne hat zum Raum 'Füllerfeder' gewechselt.
+[Füllerfeder] Anne ist dem Raum beigetreten.
+Raum: "Antonia" wurde erstellt 
+Anne wechselt vom Raum Füllerfeder (1 Benutzer) zu Lobby (0 Benutzer)
+[Füllerfeder] Anne hat zum Raum 'Lobby' gewechselt.
+[Lobby] Anne ist dem Raum beigetreten.
+Raum: "Füllerfeder" wurde gelöscht
+"Antonia" wurde zu "Antonia " umbenannt
+"Antonia " wurde zu "Antonia -" umbenannt
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Anne wechselt vom Raum Lobby (1 Benutzer) zu Antonia - (0 Benutzer)
+[Lobby] Anne hat zum Raum 'Antonia -' gewechselt.
+[Antonia -] Anne ist dem Raum beigetreten.
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
+Raum: "Antonia -" wurde erstellt 
