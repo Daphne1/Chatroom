@@ -37,7 +37,7 @@ public class ServerLayout {
                             String newName = actionInformation.getText();
                             if (!newName.equals("Lobby") && !chooseAction.getSelectedItem().equals(server2.getRaumListeHashMap().get("Lobby"))) {
                                 server2.editRoom(r, newName);
-                                response.setText(r.getName() + "wurde in '" + newName + "' umbenannt.");
+                                response.setText("\"" + r.getName() + "\" wurde in \"" + newName + "\" umbenannt.");
                                 server2.log("\""+r.getName()+"\" wurde zu \""+ newName + "\" umbenannt");
                             }
                         }
@@ -69,8 +69,8 @@ public class ServerLayout {
                     case "Benutzer kicken":
                         if (userList.getSelectedValue() != null) {
                             response.setText("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
-                            server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
                             server2.log("Benutzer " + userList.getSelectedValue() + " wurde gekickt.");
+                            server2.kickUser(((ClientThread) userList.getSelectedValue()).getUserName());
                         }
                         break;
                     case "Benutzer ausschließen":
@@ -102,6 +102,8 @@ public class ServerLayout {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+        response.setText("");
 
     }
 

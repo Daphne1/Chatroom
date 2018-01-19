@@ -115,17 +115,18 @@ public class Server2 {
 	}
 
 	public void insertNutzer(String name, ClientThread thread) {
+
 		nutzerListe.put(name, thread);
 		updateAllLists();
 		GUI.setServerlogInfo("Lobby");
+
 	}
 
 	public void removeNutzer(ClientThread name) {
-		log("1: "+nutzerListe.toString());
-		//nutzerListe.remove(name);
+
 		nutzerListe.remove(name.getUserName());
-		log("2: "+nutzerListe.toString());
 		updateAllLists();
+
 	}
 
 	private void saveUserData() {
@@ -287,8 +288,8 @@ public class Server2 {
 	    //init the server
 	    Server2.getInstance();
 
-
 	}
+
 	protected void log(String message) {
 
 		try {
@@ -298,18 +299,23 @@ public class Server2 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		GUI.appendLog(message);
 		System.out.println(message);
+
 	}
 
 	protected void newRoom (String name) {
+
 		if (!raumListe.containsKey(name) && !name.equals("Lobby")) {
 			raumListe.put(name, new Raum(name));
 			updateAllLists();
 		}
+
 	}
 
 	protected void editRoom (Raum room, String newName) {
+
 		if (!raumListe.containsKey(newName) && !newName.equals("Lobby") && !room.equals(raumListe.get("Lobby"))) {
 
 			newRoom(newName);
@@ -317,6 +323,7 @@ public class Server2 {
 			deleteRoom(room);
 			updateAllLists();
 		}
+
 	}
 
 	protected void deleteRoom (Raum room) {
@@ -357,6 +364,9 @@ public class Server2 {
 	boolean nutzerlisteContainsUser(String name){
 		return nutzerListe.containsKey(name);
 	}
+
+
+
 
 
 
