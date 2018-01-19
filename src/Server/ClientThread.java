@@ -93,12 +93,10 @@ class ClientThread extends Thread {
 		try { 
 			String input = this.input.readLine();
 			if (input == null){
-				server2.log("null emfangen");
 				closeClientThread();
 			}
 			return input;
 		} catch (IOException e) {
-			server2.log("<ClientThread> accept funtioniert nicht");
 			e.printStackTrace();
 			return null;
 		}
