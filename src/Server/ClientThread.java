@@ -51,6 +51,7 @@ class ClientThread extends Thread {
         raum.removeUser(name);
         raum = neuerRaum;
         raum.addUser(name);
+        server2.updateAllLists();
         sendToRoom(name + " ist dem Raum beigetreten.");
     }
 
@@ -71,6 +72,7 @@ class ClientThread extends Thread {
 	
 	void sendToRoom (String message) {
 
+    	server2.log("[" + raum.getName() + "] " + message);
 
 	    JSONObject nachricht = new JSONObject()
                 .put("type","message")
@@ -115,6 +117,8 @@ class ClientThread extends Thread {
 
 	        if (client != null)
 	            client.close();
+
+	        sendToRoom("\"" + name + "\" ist nicht mehr online.");
 
         } catch (IOException e) {
 	        //already disconnected?
@@ -265,6 +269,13 @@ class ClientThread extends Thread {
 											.put("status","ok")
 											.toString());
 						}
+
+						send(
+									new JSONObject()
+											.put("type", "message")
+											.put("message", "Sie haben in den Raum '" + neuerRaum.getName() + "' gewechselt.")
+											.put("status", "ok")
+											.toString());
 
 					}
 					break;
