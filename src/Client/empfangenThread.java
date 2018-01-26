@@ -1,5 +1,6 @@
 package Client;
 
+import Server.Server2;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 
 class empfangenThread extends Thread {
@@ -15,6 +17,8 @@ class empfangenThread extends Thread {
 	BufferedReader bis;
 	Socket server;
 	Client client;
+
+	private ArrayList<Dialog> privateChatList = new ArrayList<>();
 
 	empfangenThread(BufferedReader bis, Socket server, Client client) {
 		this.bis = bis;
@@ -74,20 +78,45 @@ class empfangenThread extends Thread {
 
 						client.updateUser(json.optJSONArray("message"));
 
+
+						client.updateAllUser(json.optJSONArray("message"));
+						client.updateAllUser(json.optJSONArray("allUser"));
+
 					} else if (type.equals("login")) {
 
-						if (json.optString("status","ok").equals("ok")) {
+						if (json.optString("status", "ok").equals("ok")) {
 							client.confirmLogin();
-							String nachricht = json.optString("message","");
-                            nachricht = nachricht.equals("") ? "Du bist nun eingeloggt" : nachricht;
-							client.appendMessage( nachricht );
+							String nachricht = json.optString("message", "");
+							nachricht = nachricht.equals("") ? "Du bist nun eingeloggt" : nachricht;
+							client.appendMessage(nachricht);
 						} else {
-							client.resetLogin(json.optString("message","Ungültiger Login"));
+							client.resetLogin(json.optString("message", "Ungültiger Login"));
 						}
 
-					}
-					else {
+					} else if (type.equals("privateChat")) {
+
+						boolean partner_exists = false;
+						String targetName = json.optString("privateChat", "");
+
+						for (int i= 0; i < privateChatList.size(); i++) {
+							if (privateChatList.get(i).getPartner().equals(targetName)) {
+								privateChatList.get(i).appendMessage(json.optString("message", ""));
+								partner_exists = true;
+							}
+						}
+
+						if (!partner_exists) {
+							Dialog a = new Dialog(this);
+							a.Dialog_start();
+							privateChatList.add(a);
+							a.appendMessage(json.optString("message", ""));
+						}
+
+
+					} else {
+
 						client.appendMessage(ankommendeNachricht);
+
 					}
 				}
 
@@ -98,4 +127,13 @@ class empfangenThread extends Thread {
 			}
 		}
 	}
+
+	public ArrayList<Dialog> getPrivateChatList() {
+		return privateChatList;
+	}
+
+	void addDialog(Dialog dia) {
+		privateChatList.add(dia);
+	}
+
 }

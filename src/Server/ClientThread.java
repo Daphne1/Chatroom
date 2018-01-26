@@ -4,6 +4,7 @@ import org.json.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 
 class ClientThread extends Thread { 
 
@@ -239,7 +240,7 @@ class ClientThread extends Thread {
 			type = message.optString("type","");
 
 		} catch (JSONException e) {
-			//malformed data
+//			malformed data
 		}
 
 		if (message == null) {
@@ -253,6 +254,20 @@ class ClientThread extends Thread {
 						sendToRoom(name + ":\t" + nachricht);
 					}
 					break;
+				case "privateChat":
+
+					String targetName = message.optString("privateChat", "");
+					server2.log("targetName: " + targetName);
+					ClientThread target = (ClientThread) server2.getNutzerListeHashMap().get(targetName);
+					server2.log("target: " + target.getUserName());
+
+					String nachrichtPrivat = message.optString("message", "");
+					if (nachrichtPrivat.equals("")) {
+						target.send(message.toString());
+					}
+
+					server2.log(name + " hat eine Nachricht an " + targetName + " gesendet.");
+
 				case "switchRoom":
 					String raumName = message.optString("message", "");
 
@@ -280,7 +295,7 @@ class ClientThread extends Thread {
 					}
 					break;
 				case "logout":
-					System.out.println(name + " hat seine Verbindung abgebrochen");
+					System.out.println(name + " hat seine Verbindung abgebrochen.");
 					sendToRoom("Zu " + name + " besteht keine Verbindung mehr.");
 
 					if ( client != null ) {
@@ -296,7 +311,7 @@ class ClientThread extends Thread {
 
 					break;
 				default:
-					server2.log(getUserName() + " hat einen unbekannten befehl gesendet");
+					server2.log(getUserName() + " hat einen unbekannten Befehl gesendet.");
 					break;
 
 			}
@@ -312,6 +327,13 @@ class ClientThread extends Thread {
         // aktuelle Nutzer
         JSONArray onlineListe = new JSONArray();
 
+        JSONArray allUser = new JSONArray();
+		HashMap<String, ClientThread> nutzerListe = server2.getNutzerListeHashMap();
+
+        for (String name : nutzerListe.keySet()) {
+        	allUser.put(name);
+		}
+
         if (raum != null) {
             for (String _x : raum.getNutzerList()) {
                 onlineListe.put(_x);
@@ -320,7 +342,8 @@ class ClientThread extends Thread {
             JSONObject nutzer = new JSONObject()
                     .put("type","nutzer")
                     .put("message", onlineListe)
-                    .put("status","ok");
+                    .put("status","ok")
+					.put("allUser", allUser);
 
             send(nutzer.toString());
         }

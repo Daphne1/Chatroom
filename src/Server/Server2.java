@@ -281,6 +281,7 @@ public class Server2 {
 		new Server2();
 
 	}
+
 	protected void log(String message) {
 
 		try {

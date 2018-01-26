@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -11,25 +12,29 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 
 //SINGLETON
 public class Client {
 
-	private JPanel mainPanel;
-	JTextField inputField;
-	private JLabel RoomLabel;
-	private JButton sendButton;
-	private JTabbedPane tabbedPane1;
-	private JList<String> userlist;
+    private JPanel mainPanel;
+    JTextField inputField;
+    private JLabel RoomLabel;
+    private JButton sendButton;
+    private JTabbedPane privateChats;
+    private JList<String> userlist;
     private JList<String> roomlist;
     private JTextArea clientLog;
+    private JList privatelist;
     private JPanel Benutzer;
     private JPanel Raeume;
 
     private JPopupMenu popupMenuRoom = new JPopupMenu();
     private JMenuItem switchRoom;
+    private JMenuItem openDialog;
 
     private Socket server;
     private PrintWriter printWriterOutputStream;
@@ -39,14 +44,23 @@ public class Client {
 
     private DefaultListModel listUser = new DefaultListModel();
     private DefaultListModel listRooms = new DefaultListModel();
+    private DefaultListModel listPrivateChats = new DefaultListModel();
+
+/*
+
+    private LinkedList<Gespräch> dialogs = new LinkedList<>();
+*/
+
 
     //ROOMNAME, STRING
     private HashMap<String, String> RoomTexts;
     private String user;
     private String pw;
-//    private boolean started;
+    //    private boolean started;
     private boolean enteredUser = false;
     private boolean enteredPassword = false;
+
+
 
     protected Client() {
 
@@ -102,6 +116,29 @@ public class Client {
                 switchRoom();
             }
         });
+
+        /////////////////////////////////
+
+        privatelist.addMouseListener(new MouseAdapter() {
+                                      public void mouseClicked(MouseEvent me) {                                             //kontextmenue
+                                          // if right mouse button clicked (or me.isPopupTrigger())
+                                          if (SwingUtilities.isRightMouseButton(me)
+                                                  && !privatelist.isSelectionEmpty()
+                                                  && privatelist.locationToIndex(me.getPoint())
+                                                  == privatelist.getSelectedIndex()) {
+                                              popupMenuRoom.show(privatelist, me.getX(), me.getY());
+
+                                          }
+                                      }
+                                  }
+        );
+        popupMenuRoom.add(openDialog = new JMenuItem("privaten Dialog öffnen"));
+        openDialog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                // TODO aus EmpfangenTread Dialog starten
+            }
+        });
 	}
 
     private void eingabe() {
@@ -118,6 +155,7 @@ public class Client {
 
     private void GUI_start() {
         JFrame clientFrame = new JFrame("Client Fenster");
+        clientFrame.setLocation(new Point(150, 150));
         clientFrame.setContentPane(mainPanel);
         clientFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         clientFrame.pack();
@@ -166,6 +204,20 @@ public class Client {
 
     }
 
+    void updateAllUser(JSONArray array) {
+
+        if (array != null) {
+
+            listPrivateChats.clear();
+
+            for (int i = 0; i < array.length(); i++) {
+                listPrivateChats.addElement(array.optString(i, ""));
+            }
+        }
+
+        privateChats.setModel((SingleSelectionModel) listPrivateChats);
+
+    }
 
     protected void senden(String message) {
 
@@ -198,8 +250,6 @@ public class Client {
 		System.out.println(message + "\n");
 		clientLog.setCaretPosition(clientLog.getDocument().getLength());
 	}
-
-
 
 
     private void switchRoom(){
@@ -270,4 +320,5 @@ public class Client {
     boolean isLoginConfirmed() {
         return loginConfirmed;
     }
+
 }
