@@ -33,6 +33,7 @@ public class Client {
     private JPanel Raeume;
 
     private JPopupMenu popupMenuRoom = new JPopupMenu();
+    private JPopupMenu popupMenuUser = new JPopupMenu();
     private JMenuItem switchRoom;
     private JMenuItem openDialog;
 
@@ -126,17 +127,18 @@ public class Client {
                                                   && !privatelist.isSelectionEmpty()
                                                   && privatelist.locationToIndex(me.getPoint())
                                                   == privatelist.getSelectedIndex()) {
-                                              popupMenuRoom.show(privatelist, me.getX(), me.getY());
+                                              popupMenuUser.show(privatelist, me.getX(), me.getY());
 
                                           }
                                       }
                                   }
         );
-        popupMenuRoom.add(openDialog = new JMenuItem("privaten Dialog öffnen"));
+        popupMenuUser.add(openDialog = new JMenuItem("privaten Dialog öffnen"));
         openDialog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 // TODO aus EmpfangenTread Dialog starten
+                openDialog();
             }
         });
 	}
@@ -215,7 +217,7 @@ public class Client {
             }
         }
 
-        privateChats.setModel((SingleSelectionModel) listPrivateChats);
+        privatelist.setModel(listPrivateChats);
 
     }
 
@@ -258,6 +260,18 @@ public class Client {
         request
                 .put("type", "switchRoom")
                 .put("message", message);
+
+        senden(request.toString());
+    }
+
+    private void openDialog(){
+        JSONObject request = new JSONObject();
+        String partner = (String) privatelist.getSelectedValue(); // warum ist der Cast nötig?
+        request
+                .put("type", "privateChat")
+//                .put("sender", user)
+                .put("online", true)
+                .put("privateChat", partner);
 
         senden(request.toString());
     }
@@ -319,6 +333,25 @@ public class Client {
 
     boolean isLoginConfirmed() {
         return loginConfirmed;
+    }
+
+    void openPartnerDialog(JSONObject json) {// Dialog myDialog) {
+
+        JSONObject request = new JSONObject();
+
+        request
+                .put("type", "privateChat")
+                .put("privateChat", json.optString("sender", ""))
+                .put("online", true)
+                .put("sender", json.optString("privateChat", ""))
+                .put("message", json.optString("message", ""));
+
+        senden(request.toString());
+
+    }
+
+    public String getUser() {
+        return user;
     }
 
 }

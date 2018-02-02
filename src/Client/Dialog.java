@@ -9,7 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowListener;
 
 public class Dialog {
-    Client client;
+//    Client client;
     private JPanel dialogpanel;
     private JButton button1;
     private JTextField textField;
@@ -17,12 +17,14 @@ public class Dialog {
 
     private String partner;
 
+    String userName;
     empfangenThread et;
 
 
-    Dialog(empfangenThread et) {
+    Dialog(String userName, empfangenThread et) {
 
         this.et = et;
+        this.userName = userName;
 
         button1.addActionListener(new ActionListener() {
             @Override
@@ -35,7 +37,9 @@ public class Dialog {
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+
                 eingabe();
+
             }
         });
 
@@ -44,14 +48,20 @@ public class Dialog {
     private void eingabe() {
         String message = textField.getText();
         appendMessage("ich: \t" + message);
+        // TODO sendet nicht oder erstellt nicht
         JSONObject request = new JSONObject();
         request
                 .put("type", "privateChat")
                 .put("privateChat", partner)
                 .put("online", true)
+//                .put("sender", userName)
                 .put("message", message);
 
-        client.senden(request.toString());
+//        textArea.setText(request.optString("message", "feehler"));
+        System.out.println("client: " + et.client.getUser());
+        System.out.println("userName: " + userName);
+        et.client.senden(request.toString());
+//        textField.setText("Bla");
         textField.setText("");
     }
 
@@ -68,7 +78,7 @@ public class Dialog {
 
         dialog.addWindowListener(new WindowAdapter() {
             public void windowClosing() {
-                client.senden(partner + " hat den Chat verlassen.");
+                et.client.senden(partner + " hat den Chat verlassen.");
                 dialog.dispose();
                 et.getPrivateChatList().remove(this);
             }

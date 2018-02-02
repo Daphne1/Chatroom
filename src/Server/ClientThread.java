@@ -1,5 +1,6 @@
 package Server;
 
+import com.sun.security.ntlm.Client;
 import org.json.*;
 import javax.swing.*;
 import java.io.*;
@@ -256,6 +257,24 @@ class ClientThread extends Thread {
 					break;
 				case "privateChat":
 
+					String nachrichtPrivat = message.optString("message", null);
+//					String sender = message.optString("sender", "");
+					String partnerName = message.optString("privateChat", "");
+					ClientThread partnerThread = (ClientThread) server2.getNutzerListeHashMap().get(partnerName);
+					message.put("sender", getUserName());
+
+
+					if (nachrichtPrivat == null || !nachrichtPrivat.equals("")) {
+						System.out.println("partnerThread: " + partnerThread.getUserName());
+						System.out.println("message: " + message.toString());
+						System.out.println("nachrichtPrivat: " + nachrichtPrivat);
+						partnerThread.send(message.toString());
+					}
+
+					server2.log(nachrichtPrivat);
+					break;
+
+					/*// erhält Name des angegebenen Partners
 					String targetName = message.optString("privateChat", "");
 					server2.log("targetName: " + targetName);
 					ClientThread target = (ClientThread) server2.getNutzerListeHashMap().get(targetName);
@@ -266,7 +285,7 @@ class ClientThread extends Thread {
 						target.send(message.toString());
 					}
 
-					server2.log(name + " hat eine Nachricht an " + targetName + " gesendet.");
+					server2.log(name + " hat eine Nachricht an " + targetName + " gesendet.");*/
 
 				case "switchRoom":
 					String raumName = message.optString("message", "");
@@ -343,6 +362,7 @@ class ClientThread extends Thread {
                     .put("type","nutzer")
                     .put("message", onlineListe)
                     .put("status","ok")
+//					.put("partner", name)
 					.put("allUser", allUser);
 
             send(nutzer.toString());

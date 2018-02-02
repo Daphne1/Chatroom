@@ -78,8 +78,7 @@ class empfangenThread extends Thread {
 
 						client.updateUser(json.optJSONArray("message"));
 
-
-						client.updateAllUser(json.optJSONArray("message"));
+//						client.updateAllUser(json.optJSONArray("message"));
 						client.updateAllUser(json.optJSONArray("allUser"));
 
 					} else if (type.equals("login")) {
@@ -96,22 +95,38 @@ class empfangenThread extends Thread {
 					} else if (type.equals("privateChat")) {
 
 						boolean partner_exists = false;
-						String targetName = json.optString("privateChat", "");
+//						String partnerName = json.optString("privateChat", "");
+//						client.appendMessage("partnerName: " + partnerName);
+						boolean partner_online = json.optBoolean("online", false);
+						Dialog myDialog = null;
+						String sender = json.optString("sender", "");
+						System.out.println("Sender: " + sender);
 
-						for (int i= 0; i < privateChatList.size(); i++) {
-							if (privateChatList.get(i).getPartner().equals(targetName)) {
-								privateChatList.get(i).appendMessage(json.optString("message", ""));
+						for (int i = 0; i < privateChatList.size(); i++) {
+							System.out.println("Sender: " + privateChatList.get(i));
+							if (privateChatList.get(i).getPartner().equals(sender)) {
+								myDialog = privateChatList.get(i);
 								partner_exists = true;
+								break;
 							}
 						}
 
 						if (!partner_exists) {
-							Dialog a = new Dialog(this);
-							a.Dialog_start();
-							privateChatList.add(a);
-							a.appendMessage(json.optString("message", ""));
+							myDialog = new Dialog(client.getUser(), this);
+							System.out.println("clientET: " + client.getUser());
+							myDialog.Dialog_start();
+							privateChatList.add(myDialog);
+							myDialog.appendMessage("Neuer Chat zu " + sender + " geöffnet.");
+
+							client.openPartnerDialog(json);
 						}
 
+						if (partner_online) {
+							myDialog.appendMessage(
+									json.optString("sender", "") + ":\t" +
+									json.optString("message", "")
+							);
+						}
 
 					} else {
 
@@ -137,3 +152,8 @@ class empfangenThread extends Thread {
 	}
 
 }
+
+// TODO jeder kann nur privaten Chat mit sich selbst öffnen
+// TODO Nachrichten aus dem privaten Dialog werden nicht weitergegeben?
+// TODO wenn Dialog geschlossen wird, schließt sich auch das Fenster des Clients, dieser bleibt aber angemeldet, nur die GUI verschwindet.
+
