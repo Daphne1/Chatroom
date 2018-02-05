@@ -21,10 +21,9 @@ public class Dialog {
     empfangenThread et;
 
 
-    Dialog(String userName, empfangenThread et) {
+    Dialog(empfangenThread et) {
 
         this.et = et;
-        this.userName = userName;
 
         button1.addActionListener(new ActionListener() {
             @Override
@@ -58,7 +57,7 @@ public class Dialog {
                 .put("message", message);
 
 //        textArea.setText(request.optString("message", "feehler"));
-        System.out.println("client: " + et.client.getUser());
+//        System.out.println("client: " + et.client.getUser());
         System.out.println("userName: " + userName);
         et.client.senden(request.toString());
 //        textField.setText("Bla");

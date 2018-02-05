@@ -2,6 +2,8 @@ package Server;
 
 import com.sun.security.ntlm.Client;
 import org.json.*;
+import sun.util.resources.cldr.xh.CalendarData_xh_ZA;
+
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
@@ -81,13 +83,25 @@ class ClientThread extends Thread {
                 .put("message", message)
                 .put("status", "ok");
 
-	    String toSend = nachricht.toString();
-
 	    for (String _x : raum.getNutzerList()) {
 
 	        if (!_x.equals(this.getUserName())) {
-                server2.sendToUser(_x, toSend);
+                server2.sendToUser(_x, nachricht.toString());
             }
+		}
+	}
+
+	void sendToPartner (String partnerName, String message) {
+    	// TODO!!
+
+		server2.log("Privat an " + partnerName + ": " + message);
+
+		for (String _x : server2.getNutzerListe()) {
+
+			if (_x.equals(partner)) {
+				server2.sendToUser(_x, message.toString());
+				break;
+			}
 		}
 	}
 
@@ -256,7 +270,14 @@ class ClientThread extends Thread {
 					}
 					break;
 				case "privateChat":
+					String nachrichtPrivat = message.optString("message", null);
+					String partnerName = message.optString("privateChat", "keine Zielperson");
 
+					if(!nachrichtPrivat.equals("")/* || nachrichtPrivat == null*/) {
+						sendToPartner(partnerName, name + ":\t" + nachrichtPrivat);
+						System.out.println("Es ist eine Nachricht für einen Dialog: " + nachrichtPrivat);
+					}
+/*
 					String nachrichtPrivat = message.optString("message", null);
 //					String sender = message.optString("sender", "");
 					String partnerName = message.optString("privateChat", "");
@@ -270,7 +291,7 @@ class ClientThread extends Thread {
 						System.out.println("nachrichtPrivat: " + nachrichtPrivat);
 						partnerThread.send(message.toString());
 					}
-
+*/
 					server2.log(nachrichtPrivat);
 					break;
 

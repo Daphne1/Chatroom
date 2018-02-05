@@ -112,8 +112,8 @@ class empfangenThread extends Thread {
 						}
 
 						if (!partner_exists) {
-							myDialog = new Dialog(client.getUser(), this);
-							System.out.println("clientET: " + client.getUser());
+							myDialog = new Dialog(this);
+//							System.out.println("clientET: " + client.getUser());
 							myDialog.Dialog_start();
 							privateChatList.add(myDialog);
 							myDialog.appendMessage("Neuer Chat zu " + sender + " geöffnet.");

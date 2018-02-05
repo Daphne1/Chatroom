@@ -1,50 +1,474 @@
 Server hat gestartet.
 ClientThread läuft
 ein neuer Client möchte sich anmelden
-Anne versucht sich anzumelden 
-Neuer Account registriert: Anne
-Anne ist jetzt angemeldet
-[Lobby] Anne hat sich eingeloggt.
-[Lobby] Anne:	Hallo
-Anne wechselt vom Raum Lobby (1 Benutzer) zu Füllerfeder (0 Benutzer)
-[Lobby] Anne hat zum Raum 'Füllerfeder' gewechselt.
-[Füllerfeder] Anne ist dem Raum beigetreten.
-Raum: "Antonia" wurde erstellt 
-Anne wechselt vom Raum Füllerfeder (1 Benutzer) zu Lobby (0 Benutzer)
-[Füllerfeder] Anne hat zum Raum 'Lobby' gewechselt.
-[Lobby] Anne ist dem Raum beigetreten.
-Raum: "Füllerfeder" wurde gelöscht
-"Antonia" wurde zu "Antonia " umbenannt
-"Antonia " wurde zu "Antonia -" umbenannt
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Anne wechselt vom Raum Lobby (1 Benutzer) zu Antonia - (0 Benutzer)
-[Lobby] Anne hat zum Raum 'Antonia -' gewechselt.
-[Antonia -] Anne ist dem Raum beigetreten.
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
-Raum: "Antonia -" wurde erstellt 
+null hat den Server verlassen
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Neuer Account registriert: Daphne
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Neuer Account registriert: Anton
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+Anton wechselt vom Raum Lobby (2 Benutzer) zu Füllerfeder (0 Benutzer)
+[Lobby] Anton hat zum Raum 'Füllerfeder' gewechselt.
+[Füllerfeder] Anton ist dem Raum beigetreten.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Anton hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+Could not bind Socket!
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Neuer Account registriert: Theresa
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+Theresa wechselt vom Raum Lobby (2 Benutzer) zu Füllerfeder (0 Benutzer)
+[Lobby] Theresa hat zum Raum 'Füllerfeder' gewechselt.
+[Füllerfeder] Theresa ist dem Raum beigetreten.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+targetName: 
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Daphne hat eine Nachricht an Daphne gesendet.
+targetName: 
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Theresa versucht sich anzumelden 
+Theresa ist jetzt angemeldet
+[Lobby] Theresa hat sich eingeloggt.
+targetName: Daphne
+target: Daphne
+Theresa hat eine Nachricht an Daphne gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Hallo versucht sich anzumelden 
+Neuer Account registriert: Hallo
+Hallo ist jetzt angemeldet
+[Lobby] Hallo hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+targetName: Hallo
+target: Hallo
+Daphne hat eine Nachricht an Hallo gesendet.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Hallo versucht sich anzumelden 
+ein neuer Client möchte sich anmelden
+Hallo versucht sich anzumelden 
+Hallo ist jetzt angemeldet
+[Lobby] Hallo hat sich eingeloggt.
+targetName: Hallo
+target: Hallo
+Hallo hat eine Nachricht an Hallo gesendet.
+targetName: 
+targetName: Daphne
+target: Daphne
+Daphne hat eine Nachricht an Daphne gesendet.
+Daphne hat den Server verlassen
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+targetName: Hallo
+target: Hallo
+Daphne hat eine Nachricht an Hallo gesendet.
+targetName: Daphne
+target: Daphne
+Daphne hat eine Nachricht an Daphne gesendet.
+targetName: 
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne versucht sich anzumelden, obwohl er schon angemeldet ist
+ein neuer Client möchte sich anmelden
+Hallp versucht sich anzumelden 
+Neuer Account registriert: Hallp
+Hallp ist jetzt angemeldet
+Daphne ist jetzt angemeldet
+[Lobby] Hallp hat sich eingeloggt.
+targetName: Hallo
+target: Hallo
+Hallp hat eine Nachricht an Hallo gesendet.
+targetName: Daphne
+target: Daphne
+Hallp hat eine Nachricht an Daphne gesendet.
+targetName: Hallp
+target: Hallp
+Hallp hat eine Nachricht an Hallp gesendet.
+Hallp hat den Server verlassen
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+null hat den Server verlassen
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+
+
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+
+
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+null
+
+Daphne hat den Server verlassen
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+Daphne hat den Server verlassen
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+Privat an Daphne: Dialog zu Daphne wurde geöffnet.
+Dialog zu Daphne wurde geöffnet.
+Privat an : Dialog zu Daphne wurde geöffnet.
+Dialog zu Daphne wurde geöffnet.
+Privat an keine Zielperson: Hallo
+Hallo
+Privat an keine Zielperson: wie gehts?
+wie gehts?
+[Lobby] Daphne:	Hallo
+[Lobby] Anton:	jjkibjfsd
+[Lobby] Anton:	päihjef
+[Lobby] Anton:	ihpdf
+Privat an Anton: Dialog zu Anton wurde geöffnet.
+Dialog zu Anton wurde geöffnet.
+Privat an : Dialog zu Anton wurde geöffnet.
+Dialog zu Anton wurde geöffnet.
+Privat an keine Zielperson: Hallo Anton
+Hallo Anton
+Server hat gestartet.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Daphne versucht sich anzumelden 
+Daphne ist jetzt angemeldet
+[Lobby] Daphne hat sich eingeloggt.
+ClientThread läuft
+ein neuer Client möchte sich anmelden
+Anton versucht sich anzumelden 
+Anton ist jetzt angemeldet
+[Lobby] Anton hat sich eingeloggt.
+Privat an Anton: Dialog zu Anton wurde geöffnet.
+Dialog zu Anton wurde geöffnet.
+Privat an : Dialog zu Anton wurde geöffnet.
+Dialog zu Anton wurde geöffnet.
+Privat an keine Zielperson: Hallo
+Hallo

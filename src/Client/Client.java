@@ -269,7 +269,7 @@ public class Client {
         String partner = (String) privatelist.getSelectedValue(); // warum ist der Cast nötig?
         request
                 .put("type", "privateChat")
-//                .put("sender", user)
+                .put("message", "Dialog zu " + partner + " wurde geöffnet.")
                 .put("online", true)
                 .put("privateChat", partner);
 
@@ -350,8 +350,7 @@ public class Client {
 
     }
 
-    public String getUser() {
-        return user;
+    public void setUserName(String user) {
+        this.user = user;
     }
-
 }
