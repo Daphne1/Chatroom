@@ -228,7 +228,6 @@ public class Client {
 
 	}
 
-
     public static void main(String args[]) {
 		Client C = new Client();
 		C.startClient();
@@ -270,6 +269,7 @@ public class Client {
         request
                 .put("type", "privateChat")
                 .put("message", "Dialog zu " + partner + " wurde geöffnet.")
+                .put("partnerDialogAlreadyExists", false)
                 .put("online", true)
                 .put("privateChat", partner);
 
@@ -339,11 +339,17 @@ public class Client {
 
         JSONObject request = new JSONObject();
 
+        System.out.println(json.optString("privateChat", "keinen Partner gefunden"));
+        System.out.println(json.optString("sender", "keinen Sender gefunden"));
+        System.out.println(json.optString("message", "keine Nachricht gefunden"));
+
+
+
         request
                 .put("type", "privateChat")
                 .put("privateChat", json.optString("sender", ""))
                 .put("online", true)
-                .put("sender", json.optString("privateChat", ""))
+//                .put("sender", json.optString("privateChat", ""))
                 .put("message", json.optString("message", ""));
 
         senden(request.toString());

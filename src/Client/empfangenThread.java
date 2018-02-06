@@ -103,11 +103,11 @@ class empfangenThread extends Thread {
 						System.out.println("Sender: " + sender);
 
 						for (int i = 0; i < privateChatList.size(); i++) {
-							System.out.println("Sender: " + privateChatList.get(i));
+							System.out.println("Sender?: " + privateChatList.get(i).getPartner());
 							if (privateChatList.get(i).getPartner().equals(sender)) {
 								myDialog = privateChatList.get(i);
 								partner_exists = true;
-								break;
+//								break;
 							}
 						}
 
@@ -116,10 +116,16 @@ class empfangenThread extends Thread {
 //							System.out.println("clientET: " + client.getUser());
 							myDialog.Dialog_start();
 							privateChatList.add(myDialog);
+							myDialog.setPartner(json.optString("sender", "keinenPartnerGefundenET"));
 							myDialog.appendMessage("Neuer Chat zu " + sender + " geöffnet.");
 
-							client.openPartnerDialog(json);
+							Boolean partnerDialogAlreadyExists = json.optBoolean("partnerDialogAlreadyExists", true);
+							if (!partnerDialogAlreadyExists) {
+								client.openPartnerDialog(json);
+							}
 						}
+
+						// TODO Onlinebestätigung kontrollieren evtl. an anderer Stelle
 
 						if (partner_online) {
 							myDialog.appendMessage(

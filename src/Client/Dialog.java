@@ -58,7 +58,8 @@ public class Dialog {
 
 //        textArea.setText(request.optString("message", "feehler"));
 //        System.out.println("client: " + et.client.getUser());
-        System.out.println("userName: " + userName);
+//        System.out.println("userName: " + userName);
+        System.out.println("PartnerDialog: " + partner);
         et.client.senden(request.toString());
 //        textField.setText("Bla");
         textField.setText("");
@@ -73,11 +74,21 @@ public class Dialog {
     void Dialog_start() {
         JFrame dialog = new JFrame();
         dialog.setContentPane(dialogpanel);
-        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         dialog.addWindowListener(new WindowAdapter() {
             public void windowClosing() {
-                et.client.senden(partner + " hat den Chat verlassen.");
+
+                JSONObject request = new JSONObject();
+                request
+                        .put("type", "privateChat")
+                        .put("privateChat", partner)
+                        .put("online", true)
+                        .put("message", partner + " hat den Chat verlassen.");
+
+                System.out.println("PartnerDialog: " + partner);
+                et.client.senden(request.toString());
+
                 dialog.dispose();
                 et.getPrivateChatList().remove(this);
             }
@@ -93,4 +104,7 @@ public class Dialog {
         return partner;
     }
 
+    public void setPartner(String partner) {
+        this.partner = partner;
+    }
 }

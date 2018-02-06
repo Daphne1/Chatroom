@@ -72,6 +72,7 @@ class ClientThread extends Thread {
 
 		pWriterOutputStream.println(message);
 		pWriterOutputStream.flush();
+
 	}
 	
 	void sendToRoom (String message) {
@@ -98,7 +99,7 @@ class ClientThread extends Thread {
 
 		for (String _x : server2.getNutzerListe()) {
 
-			if (_x.equals(partner)) {
+			if (_x.equals(partnerName)) {
 				server2.sendToUser(_x, message.toString());
 				break;
 			}
@@ -255,7 +256,7 @@ class ClientThread extends Thread {
 			type = message.optString("type","");
 
 		} catch (JSONException e) {
-//			malformed data
+			System.out.println("malformed data");
 		}
 
 		if (message == null) {
@@ -274,8 +275,9 @@ class ClientThread extends Thread {
 					String partnerName = message.optString("privateChat", "keine Zielperson");
 
 					if(!nachrichtPrivat.equals("")/* || nachrichtPrivat == null*/) {
-						sendToPartner(partnerName, name + ":\t" + nachrichtPrivat);
 						System.out.println("Es ist eine Nachricht für einen Dialog: " + nachrichtPrivat);
+						message.put("sender", name);
+						sendToPartner(partnerName, message.toString());
 					}
 /*
 					String nachrichtPrivat = message.optString("message", null);
