@@ -118,6 +118,8 @@ class empfangenThread extends Thread {
 							privateChatList.add(myDialog);
 							myDialog.setPartner(json.optString("sender", "keinenPartnerGefundenET"));
 							myDialog.appendMessage("Neuer Chat zu " + sender + " geöffnet.");
+							// entspricht keiner Dialognachricht --> bei erster Nachricht keine Anzeige
+							partner_online = false;
 
 							Boolean partnerDialogAlreadyExists = json.optBoolean("partnerDialogAlreadyExists", true);
 							if (!partnerDialogAlreadyExists) {
@@ -127,7 +129,10 @@ class empfangenThread extends Thread {
 
 						// TODO Onlinebestätigung kontrollieren evtl. an anderer Stelle
 
-						if (partner_online) {
+						System.out.println("partner_online: " + partner_online);
+
+						String privateMessage = json.optString("message", "");
+						if (partner_online /*&& !privateMessage.equals("Die Unterhaltung wurde geschlossen.")*/) {
 							myDialog.appendMessage(
 									json.optString("sender", "") + ":\t" +
 									json.optString("message", "")

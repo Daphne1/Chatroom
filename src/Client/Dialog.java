@@ -3,13 +3,14 @@ package Client;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
 
 public class Dialog {
-//    Client client;
+
+    JFrame dialog;
+    //    Client client;
     private JPanel dialogpanel;
     private JButton button1;
     private JTextField textField;
@@ -66,30 +67,41 @@ public class Dialog {
     }
 
     protected void appendMessage (String message) {
+        if (!message.matches((".*Die Unterhaltung wurde geschlossen."))) {
+            dialog.setVisible(true);
+        }
         textArea.append(message + "\n");
         System.out.println(message + "\n");
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
     void Dialog_start() {
-        JFrame dialog = new JFrame();
+        dialog = new JFrame();
         dialog.setContentPane(dialogpanel);
+        Random rn = new Random();
+        int i = Math.abs(rn.nextInt());
+        int j = Math.abs(rn.nextInt());
+        dialog.setLocation(i%800, j%1700);
+//        dialog.setLocation(new Point(500, 500));
 //        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         dialog.addWindowListener(new WindowAdapter() {
-            public void windowClosing() {
+            public void windowClosing(WindowEvent e) {
 
                 JSONObject request = new JSONObject();
                 request
                         .put("type", "privateChat")
                         .put("privateChat", partner)
                         .put("online", true)
-                        .put("message", partner + " hat den Chat verlassen.");
+                        .put("message", "Die Unterhaltung wurde geschlossen.");
 
+                System.out.println("request WindowClosing: " + request);
                 System.out.println("PartnerDialog: " + partner);
                 et.client.senden(request.toString());
+                System.out.println("request WindowClosing: " + request);
 
-                dialog.dispose();
+//                dialog.dispose();
+                dialog.setVisible(false);
                 et.getPrivateChatList().remove(this);
             }
         });

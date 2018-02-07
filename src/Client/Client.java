@@ -268,7 +268,8 @@ public class Client {
         String partner = (String) privatelist.getSelectedValue(); // warum ist der Cast nötig?
         request
                 .put("type", "privateChat")
-                .put("message", "Dialog zu " + partner + " wurde geöffnet.")
+                // TODO falsch :/
+//                .put("message", "Bin online! :)")
                 .put("partnerDialogAlreadyExists", false)
                 .put("online", true)
                 .put("privateChat", partner);
@@ -348,9 +349,9 @@ public class Client {
         request
                 .put("type", "privateChat")
                 .put("privateChat", json.optString("sender", ""))
-                .put("online", true)
+                .put("online", true);
 //                .put("sender", json.optString("privateChat", ""))
-                .put("message", json.optString("message", ""));
+//                .put("message", json.optString("message", ""));
 
         senden(request.toString());
 

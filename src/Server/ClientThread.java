@@ -271,13 +271,15 @@ class ClientThread extends Thread {
 					}
 					break;
 				case "privateChat":
-					String nachrichtPrivat = message.optString("message", null);
+					String nachrichtPrivat = message.optString("message", "___");
 					String partnerName = message.optString("privateChat", "keine Zielperson");
 
-					if(!nachrichtPrivat.equals("")/* || nachrichtPrivat == null*/) {
+					if(!nachrichtPrivat.equals("") || nachrichtPrivat.equals("___")) {
 						System.out.println("Es ist eine Nachricht für einen Dialog: " + nachrichtPrivat);
 						message.put("sender", name);
-						sendToPartner(partnerName, message.toString());
+						if (partner_online(partnerName)) {
+							sendToPartner(partnerName, message.toString());
+						}
 					}
 /*
 					String nachrichtPrivat = message.optString("message", null);
@@ -360,6 +362,18 @@ class ClientThread extends Thread {
 
 		}
 	}
+
+	private boolean partner_online (String partner) {
+
+		for(String s : server2.getNutzerListe()) {
+			if (s.equals(partner)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 
 	protected void updateLists() {
         ////////////////////////////////////
