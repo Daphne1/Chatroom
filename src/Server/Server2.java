@@ -1,0 +1,396 @@
+package Server;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.io.IOException;
+import java.net.*;
+import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
+//SINGLETON
+public class Server2 {
+
+	private final int PORT = 3456;
+
+	private String serverName = "PseudoSportProgram";
+
+	private ServerSocket socket;
+
+	// userName - ClientThread
+	private HashMap<String, ClientThread> nutzerListe;
+
+	// roomName - Raum
+	private HashMap<String, Raum> raumListe;
+
+
+	private ServerLayout GUI;
+
+	// user - password
+	private HashMap<String, Map.Entry<String, Boolean>> passwords;
+
+
+	private Server2() {
+
+		this.raumListe = new HashMap<>();
+		this.nutzerListe = new HashMap<>();
+		this.passwords = new HashMap<>();
+
+		try {
+			GUI = new ServerLayout(this);
+			GUI.start_gui();
+			GUI.setServerlogInfo(serverName);
+			this.socket = new ServerSocket(PORT);
+			log("Server hat gestartet.");
+
+			Raum lobby = new Raum("Lobby");
+			raumListe.put(lobby.getName(), lobby);
+			newRoom("Füllerfeder");
+
+			// beschreibt Hashmap
+			loadUserData(false);
+			updateAllLists();
+
+			AcceptorThread acceptor = new AcceptorThread(this, socket);
+			acceptor.start();
+
+
+		} catch (IOException e) {
+
+			log("Could not bind Socket!");
+
+		}
+	}
+
+
+    protected boolean checkUserPassword(String user, String password) {
+		if (passwords.containsKey(user)) {
+			//password match
+			return passwords.get(user).getKey().equals(password);
+		} else {
+			return false;
+		}
+	}
+
+    protected boolean userExists(String user) {
+		return passwords.containsKey(user);
+	}
+
+    protected void createUser(String user, String password) {
+		passwords.put(user, new AbstractMap.SimpleEntry<String, Boolean>(password, false));
+
+		//save passwords
+		saveUserData();
+	}
+
+
+    protected Set<String> getRaumListe() {
+		return raumListe.keySet();
+	}
+
+    protected HashMap getRaumListeHashMap() {
+		return raumListe;
+	}
+
+	protected Raum getRaum(String name) {
+        return raumListe.containsKey(name) ? raumListe.get(name) : null;
+    }
+
+    protected HashMap getNutzerListeHashMap() {
+		return nutzerListe;
+	}
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    protected void insertNutzer(String name, ClientThread thread) {
+
+		nutzerListe.put(name, thread);
+		updateAllLists();
+		GUI.setServerlogInfo("Lobby");
+
+	}
+
+    protected void removeNutzer(ClientThread name) {
+
+		nutzerListe.remove(name.getUserName());
+		updateAllLists();
+
+	}
+
+	private void saveUserData() {
+
+		try {
+
+			File users = new File("users.txt");
+			users.createNewFile(); // if file already exists will do nothing
+			FileOutputStream stream = new FileOutputStream(users, false);
+
+			JSONObject allData = new JSONObject();
+			JSONArray allUsers = new JSONArray();
+
+			for (Map.Entry<String, Map.Entry<String, Boolean>> _x : passwords.entrySet()) {
+
+				JSONObject user = new JSONObject()
+						.put(
+								"user",
+								_x.getKey()
+						)
+						.put(
+								"password",
+								_x.getValue().getKey()
+						)
+						.put(
+								"banned",
+								_x.getValue().getValue()
+						);
+
+				allUsers.put(user);
+
+			}
+
+			allData.put("users", allUsers);
+			stream.write(allData.toString().getBytes());
+
+			updateAllLists();
+
+		} catch (FileNotFoundException e) {
+			//couldnt create file
+		} catch (IOException e) {
+			System.out.println("Couldn't open/create file.");
+		}
+	}
+
+	protected void loadUserData() {
+		loadUserData(true);
+	}
+
+	private void loadUserData(Boolean showPasswordlist) {
+
+		File users = new File("users.txt");
+		if (showPasswordlist) {
+		    log("---------------------------------------------------------------------");
+			log("Name\t| Passwort\t| gebannt");
+			log("---------------------------------------------------------------------");
+		}
+		if (users.isFile() && users.canRead()) {
+			try {
+				FileInputStream in = new FileInputStream(users);
+				try {
+					String content = "";
+					int c;
+					while ((c = in.read()) != -1) {
+						content += (char)c;
+					}
+
+					try {
+						JSONObject json = new JSONObject(content);
+
+						JSONArray usersarray = json.optJSONArray("users");
+						System.out.println("Array: " + usersarray);
+
+						if (usersarray != null) {
+
+							for (int i = 0; i < usersarray.length(); i++) {
+								JSONObject user = usersarray.optJSONObject(i);
+								System.out.println("User: " + user);
+
+								if (user != null) {
+
+									String username = user.optString("user", "");
+									String password = user.optString("password","");
+                                    Boolean banned = user.optBoolean("banned",false);
+
+									if (!username.equals("") && !password.equals("")) {
+										passwords.put(
+										        username,
+                                                new AbstractMap.SimpleEntry<String,Boolean>(password,banned)
+                                        );
+										if (showPasswordlist) {
+											log(username + "\t| " + password + "\t| " + banned);
+										}
+									}
+								}
+							}
+
+						} else {
+							System.out.println("Array didn't exist.");
+						}
+
+					} catch (JSONException e) {
+						//malformed data
+					}
+
+				} finally {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Couldn't open file.");
+			}
+
+			if (showPasswordlist) {
+				log("---------------------------------------------------------------------");
+			}
+		}
+
+	}
+
+    protected void sendToUser (String nutzer, String message) {
+
+	    nutzerListe.get(nutzer).send(message);
+
+    }
+
+    protected void banUser(String user) {
+
+	    if (passwords.containsKey(user)) {
+
+	        passwords.get(user).setValue(true);
+
+        }
+
+        saveUserData();
+
+	    kickUser(user);
+
+	    updateAllLists();
+
+    }
+
+    boolean isbanned(String user){
+			return passwords.get(user).getValue();
+	}
+
+    protected void kickUser(String user) {
+
+	    if (nutzerListe.containsKey(user))
+	        nutzerListe.get(user).kick();
+
+	    updateAllLists();
+
+    }
+
+    public static void main(String[] args) throws IOException {
+
+	    //init the server
+		new Server2();
+
+	}
+
+	protected void log(String message) {
+
+		try {
+			BufferedWriter output = new BufferedWriter(new FileWriter("verlauf.txt", true));
+			output.append(message + "\n");
+			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		GUI.appendLog(message);
+		System.out.println(message);
+
+	}
+
+	protected void newRoom (String name) {
+
+		if (!raumListe.containsKey(name) && !name.equals("Lobby")) {
+			raumListe.put(name, new Raum(name));
+			updateAllLists();
+		}
+
+	}
+
+	protected void editRoom (Raum room, String newName) {
+
+		if (!raumListe.containsKey(newName) && !newName.equals("Lobby") && !room.equals(raumListe.get("Lobby"))) {
+
+			newRoom(newName);
+			raumListe.get(newName).setNutzerList(raumListe.get(room.getName()).getNutzerList());
+			deleteRoom(room);
+			updateAllLists();
+		}
+
+	}
+
+	protected void deleteRoom (Raum room) {
+	    if (!room.getName().equals("Lobby")) {
+	    	for (String s : room.getNutzerList()) {
+	    		nutzerListe.get(s).switchRoom(raumListe.get("Lobby"));
+			}
+			raumListe.remove(room.getName());
+			updateAllLists();
+
+		}
+	}
+
+	protected void updateAllLists () {
+		GUI.updateLists(nutzerListe, raumListe);
+
+		for (String s : nutzerListe.keySet()) {
+			nutzerListe.get(s).updateLists();
+		}
+	}
+
+	protected void editServername (String newName) {
+		serverName = newName;
+		GUI.setServerlogInfo(newName);
+	}
+
+	void warnUser(ClientThread ct) {
+
+        JSONObject nachricht = new JSONObject()
+                .put("type","message")
+                .put("message", "Bitte keine Dummheiten mehr.")
+                .put("status", "ok");
+
+		ct.send(nachricht.toString());
+
+	}
+
+	boolean nutzerlisteContainsUser(String name){
+		return nutzerListe.containsKey(name);
+	}
+
+
+
+
+
+
+    protected HashMap<String, Map.Entry<String, Boolean>> getPasswords() {
+        return passwords;
+    }
+
+    protected boolean isBanned(String user) {
+        return (passwords.containsKey(user)) ? passwords.get(user).getValue() : false;
+    }
+
+    //nutzerliste needs a lock
+    protected Set<String> getNutzerListe() {
+        return nutzerListe.keySet();
+    }
+
+    boolean userExist(String name){
+        return passwords.containsKey(name);
+    }
+
+    private ArrayList<String> iterateHashmap (HashMap<String, Object> map) {
+        ArrayList temp = new ArrayList();
+
+        for(String key : map.keySet()) {
+            temp.add(key);
+        }
+        return temp;
+    }
+
+    protected void end() {
+        try {
+            socket.close();
+        } catch (IOException e) {}
+    }
+}

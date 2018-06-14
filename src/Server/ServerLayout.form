@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ServerLayout">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Server.ServerLayout">
   <grid id="27dc6" binding="ROOT" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -25,10 +25,12 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="dc8c8" class="javax.swing.JTextArea" binding="textArea1" default-binding="true">
+              <component id="dc8c8" class="javax.swing.JTextArea" binding="LogDisplay">
                 <constraints/>
                 <properties>
                   <editable value="false"/>
+                  <lineWrap value="true"/>
+                  <wrapStyleWord value="true"/>
                 </properties>
               </component>
             </children>
@@ -46,7 +48,7 @@
       <grid id="2c2f7" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="line" title="Status"/>
@@ -108,7 +110,7 @@
         <properties/>
         <border type="none" title="Aktionen"/>
         <children>
-          <component id="28c51" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+          <component id="28c51" class="javax.swing.JTextField" binding="actionInformation">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -116,65 +118,35 @@
             </constraints>
             <properties/>
           </component>
-          <component id="78cb8" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+          <component id="78cb8" class="javax.swing.JComboBox" binding="chooseAction">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <editable value="false"/>
+              <model>
+                <item value="Raum umbenennen"/>
+                <item value="Raum löschen"/>
+                <item value="Raum erstellen"/>
+                <item value="Benutzer verwarnen"/>
+                <item value="Benutzer kicken"/>
+                <item value="Benutzer ausschließen"/>
+                <item value="Server umbennen"/>
+                <item value="Passwortdatei lesen"/>
+              </model>
+            </properties>
           </component>
           <component id="37c26" class="javax.swing.JButton" binding="button1" default-binding="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="ausführen"/>
             </properties>
           </component>
-          <component id="8186" class="javax.swing.JLabel">
+          <component id="8186" class="javax.swing.JLabel" binding="response">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Label"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
-      <grid id="9aee" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none" title="Informationen"/>
-        <children>
-          <component id="8cd96" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Label"/>
-            </properties>
-          </component>
-          <component id="ff528" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Label"/>
-            </properties>
-          </component>
-          <component id="f6326" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Label"/>
-            </properties>
-          </component>
-          <component id="cc2ed" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Label"/>
